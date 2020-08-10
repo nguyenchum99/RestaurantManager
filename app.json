@@ -1,0 +1,12 @@
+{
+  "name": "AppRestaurantManager",
+  "displayName": "AppRestaurantManager",
+  "expo": {
+    "name": "AppRestaurantManager",
+    "slug": "AppRestaurantManager",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
