@@ -2,13 +2,9 @@ import {
   StyleSheet,
   Text,
   View,
-  TextInput,
-  Button,
   FlatList,
   Image,
   Alert,
-  Dimensions,
-  Switch,
 } from 'react-native';
 import React, { Component } from 'react';
 import { firebaseApp } from '../components/FirebaseConfig';
@@ -30,31 +26,40 @@ export default class BillDetail extends React.Component {
       orderDetails: orders
     });
 
-    console.log(this.state.orderDetails)
-    // //food order
-    // this.itemRef
-    //   .ref('Orders')
-    //   .child(time)
-    //   .child(name)
-    //   .child('orderList')
-    //   .on('value', (snapshot) => {
-    //     var li = [];
-    //     snapshot.forEach((child) => {
-    //       li.push({
-    //         key: child.key,
-    //         name: child.val().nameFood,
-    //         //description: child.val().description,
-    //         price: child.val().priceFood,
-    //         amoutItem: child.val().amountFood,
-    //       });
-    //     });
-    //     this.setState({ data: li });
-    //   });
+   // console.log(this.state.orderDetails)
+  }
+
+  // confirm order, push data to firebase
+  confirmOrder() {
+    //alert("ban co muon")
+    Alert.alert(
+      'Alert Title',
+      ' Xác nhận đặt món',
+      [
+        {
+          text: 'Hủy',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => {
+          this.state.orderDetails.timeOrdered = new Date().toString();
+          this.itemRef.ref('Orders').push({
+            orderDetails: this.state.orderDetails
+          });
+      
+          this.setState({
+            orderDetails: ''
+          })
+        }
+       },
+      ],
+      { cancelable: false }
+    );
   }
 
   render() {
     return (
-      <View style={styles.containerView}>
+      <View >
         <Text style={styles.title}>Hóa đơn</Text>
 
         <FlatList
@@ -85,15 +90,22 @@ export default class BillDetail extends React.Component {
           keyExtractor={(item) => item.foodKey}
           ref={'flatList'} 
         />
+
+        <View style = {styles.contentTotal}>
+          <Text style= {styles.textTotal}>Tổng tiền: 120 $</Text>
+          <TouchableOpacity style = {styles.clickConfirm} onPress ={() => this.confirmOrder()}>
+            <Text style = {styles.textConfirm}>Xác nhận</Text>
+          </TouchableOpacity>
+          
+        </View>
+        
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  containerView: {
-    flex: 1,
-  },
+
   title: {
     fontWeight: 'bold', 
     fontSize: 15, 
@@ -131,4 +143,25 @@ const styles = StyleSheet.create({
     color: '#3897f1', 
     fontWeight: 'bold'
   },
+  contentTotal: {
+    margin: 20
+  },
+  textTotal: {
+    color: 'red',
+    fontSize: 15,
+    fontWeight: 'bold'
+  },
+  clickConfirm: {
+    backgroundColor: '#3897f1',
+    marginTop: 15,
+    borderColor: '#3897f1',
+    borderRadius: 10,
+    textAlign: 'center',
+    alignItems: 'center'
+  },
+  textConfirm: {
+    color: '#ffffff',
+    margin: 5
+  }
+
 });

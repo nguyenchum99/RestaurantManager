@@ -16,7 +16,7 @@ import React, { Component } from 'react';
 export default class HistoryManager extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { params = {} } = navigation.state;
-    let tabBarLabel = 'Lịch sử';
+    let tabBarLabel = 'Thống kê';
     let tabBarIcon = () => (
       <Image
         source={require('../icons/icons8-activity-history-64.png')}
