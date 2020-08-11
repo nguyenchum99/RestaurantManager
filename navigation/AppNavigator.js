@@ -4,8 +4,6 @@ import { createStackNavigator } from 'react-navigation-stack';
 import RegisterForm from '../screens/Register';
 import LoginForm from '../screens/Login';
 
-
-
 const AppNavigator = createStackNavigator({
   Login: {
     screen: LoginForm,
@@ -13,8 +11,6 @@ const AppNavigator = createStackNavigator({
   Register: {
     screen: RegisterForm,
   },
-
- 
 });
 
 export default createAppContainer(AppNavigator);

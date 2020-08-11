@@ -1,120 +1,134 @@
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  FlatList,
+  Image,
+  Alert,
+  Dimensions,
+  Switch,
+} from 'react-native';
+import React, { Component } from 'react';
+import { firebaseApp } from '../components/FirebaseConfig';
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 
+export default class BillDetail extends React.Component {
+  constructor(props) {
+    super(props);
+    this.itemRef = firebaseApp.database();
+    this.state = {
+      orderDetails: {
+      },
+    };
+  }
 
-import { StyleSheet, Text, View, TextInput, 
-    Button, FlatList, Image, Alert, Dimensions, Switch} from 'react-native';
-  import React, {Component} from 'react';
-  import {firebaseApp} from '../components/FirebaseConfig';
-  import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
-  
-  
-  
-  export default class BillDetail extends React.Component{
-    
-    constructor(props){
-        super(props);
-        this.itemRef = firebaseApp.database();
-         this.state = {
-           data : [],
-           amount: 0,
-           createAt: '',
-           nameTable: '',  
-           number: 1   
-         
-         }    
-      }
+  componentDidMount() {
+    const orders = this.props.navigation.getParam('orderDetails');
+    this.setState({
+      orderDetails: orders
+    });
 
+    console.log(this.state.orderDetails)
+    // //food order
+    // this.itemRef
+    //   .ref('Orders')
+    //   .child(time)
+    //   .child(name)
+    //   .child('orderList')
+    //   .on('value', (snapshot) => {
+    //     var li = [];
+    //     snapshot.forEach((child) => {
+    //       li.push({
+    //         key: child.key,
+    //         name: child.val().nameFood,
+    //         //description: child.val().description,
+    //         price: child.val().priceFood,
+    //         amoutItem: child.val().amountFood,
+    //       });
+    //     });
+    //     this.setState({ data: li });
+    //   });
+  }
 
-      componentDidMount(){
-        const name = this.props.navigation.getParam('nameTable', 'some default value');
-        const time = this.props.navigation.getParam('time', 'some default value');
-        this.setState({
-          nameTable: name,
-          createAt: time
-          //createAt: createAt
-        })
-        //food order
-        this.itemRef.ref('Orders').child(time).child(name).child('orderList').on('value', (snapshot) =>{
-            var li = []
-            snapshot.forEach((child)=>{
-              li.push({
-                  key: child.key,
-                  name:child.val().nameFood,
-                  //description: child.val().description,
-                  price: child.val().priceFood,
-                  amoutItem: child.val().amountFood
-            
-            })
-          })
-         this.setState({data:li})
-        });
-    }
-    
-   
-      render(){
-        return (
-  
-          <View style={styles.containerView}>
-   
-            <Text style={{marginLeft: 20, fontWeight: 'bold', fontSize: 20}}>Hóa đơn</Text>
-        
-            <FlatList style = {{flex :1}} 
-                data = {this.state.data} 
-                renderItem={ ({item, index}) => {
-                    return(
-                    
-        
-                        <View style ={{flex: 1, 
-                          backgroundColor: 'white', 
-                          borderWidth: 1,
-                          flexDirection: 'row',
-                          borderRadius: 10,
-                          marginTop: 15,
-                          marginLeft: 15, 
-                          marginRight: 15
-                        }}>
-                              <View style = {{marginLeft: 10,marginTop: 20, 
-                                height: 80, flexDirection: 'column', flex: 1}}>
-                                  <Text style = {{fontSize: 15, color: '#3897f1',fontWeight: 'bold'}}>{item.name}</Text>
-                                  <Text style = {{color: '#000000'}}>{item.price} $</Text>
-                                  <View style = {{flex:1, flexDirection: 'row'}}>
-                                    <TouchableOpacity onPress = {() => item.amoutItem - 1}>
-                                        <Image style={{width: 30, height: 30}}
-                                        source = {require('../icons/icons8-minus-32.png')}
-                                        ></Image>
-                                    </TouchableOpacity>
-                                    <Text style = {{color: '#000000', margin: 10}}>{item.amoutItem}</Text>
-                                    <TouchableOpacity onPress = {() => item.amoutItem + 1}>
-                                        <Image style={{width: 30, height: 30}}
-                                        source = {require('../icons/icons8-add-48.png')}
-                                        ></Image>
-                                    </TouchableOpacity>
-                                  </View>
-                              </View>
-                        </View>
-                
-                    );
-                  }
-                }
-                keyExtractor={(item)=>item.key}
-                ref = {"flatList"}
-                onContentSizeChange={()=> this.refs.flatList.scrollToEnd()}
-            />
-          </View>     
-         
-        );
-      }
-  
-  
-    }
-  
-  const styles = StyleSheet.create({
-    containerView: {
-      flex: 1,
+  render() {
+    return (
+      <View style={styles.containerView}>
+        <Text style={styles.title}>Hóa đơn</Text>
 
-     
-    },
-   
-  });
-  
-  
-  
+        <FlatList
+          data={this.state.orderDetails.orderList}
+          renderItem={({ item, index }) => {
+            return (
+             
+              <View
+                  style={styles.itemContent}
+                >
+                  <Image
+                    style={styles.imageFood}
+                    source={{ uri: item.foodImage }}
+                  ></Image>
+
+                  <View
+                    style={styles.textContent}>
+                    <Text style={styles.nameFood}>
+                      {item.foodName}
+                    </Text>
+                    <Text style={{ color: '#000000' }}>{item.foodPrice} $</Text>
+                    <Text style={{ color: '#000000' }}>{item.foodDescripton} </Text>
+                  </View>
+              </View>
+                 
+            );
+          }}
+          keyExtractor={(item) => item.foodKey}
+          ref={'flatList'} 
+        />
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  containerView: {
+    flex: 1,
+  },
+  title: {
+    fontWeight: 'bold', 
+    fontSize: 15, 
+    marginTop: 20, 
+    marginLeft: 20, 
+    color: '#000000'
+  },
+  itemContent: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    flexDirection: 'row',
+    borderRadius: 10,
+    marginTop: 15,
+    marginLeft: 15,
+    marginRight: 15,
+  },
+  imageFood: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginLeft: 10,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  textContent: {
+    marginLeft: 10,
+    marginTop: 10,
+    height: 80,
+    flexDirection: 'column',
+    flex: 1,   
+  },
+  nameFood: {
+    fontSize: 15, 
+    color: '#3897f1', 
+    fontWeight: 'bold'
+  },
+});

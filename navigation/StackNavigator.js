@@ -10,7 +10,7 @@ import StkNavigation from './StkNavigation';
 
 const StackNavigator = createStackNavigator({
   stack: {
-      screen: AppNavigator
+      screen: AppNavigator,
   },
   tab: {
       screen: TabNavigator

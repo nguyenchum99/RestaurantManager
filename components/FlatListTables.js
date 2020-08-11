@@ -192,7 +192,7 @@ export default class FlatListTables extends React.Component{
                     return(
                         <TouchableOpacity onPress = {() => this.props.navigation.navigate('Menu', {
                             nameTable: item.name,
-                            time: this.state.time
+                            time: new Date()
                         })}>
                             <FlatListItem 
                             item = {item} 
