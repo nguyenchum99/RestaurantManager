@@ -4,6 +4,7 @@ import FlatListTables from '../components/FlatListTables';
 import FlatListFoods from '../components/FlatListFoods';
 import OrderFood from '../components/OrderFood';
 import BillDetail from '../components/BIllDetail';
+import ConfirmBill from '../components/ConfirmBill';
 
 const StkNavgation = createStackNavigator({
   Order: {
@@ -14,6 +15,9 @@ const StkNavgation = createStackNavigator({
   },
   Bill: {
     screen: BillDetail
+  },
+  Confirm: {
+    screen: ConfirmBill
   }
  
 });

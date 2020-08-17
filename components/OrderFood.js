@@ -2,13 +2,9 @@ import {
   StyleSheet,
   Text,
   View,
-  TextInput,
-  Button,
   FlatList,
   Image,
-  Alert,
-  Dimensions,
-  Switch,
+ 
 } from 'react-native';
 import React, { Component } from 'react';
 import { firebaseApp } from '../components/FirebaseConfig';
@@ -26,7 +22,9 @@ export default class OrderFood extends React.Component {
         orderList: [],
         table: '',
         timeOrdered: '',
+        total: 0
       },
+      backgroundColor: '#ffffff'
     };
   }
 
@@ -51,18 +49,20 @@ export default class OrderFood extends React.Component {
     
   }
 
-  orderFood = (key, index) =>{
-  
+  orderFood (key, index){
+    
+    this.setState({backgroundColor: '#ccffe6'})
     this.setState({amountOrder: this.state.amountOrder + 1})
      this.state.orderDetails.orderList.push({
       'foodKey': this.state.data[index].key,
       'foodName': this.state.data[index].name,
       'foodDescripton': this.state.data[index].description,
       'foodPrice': this.state.data[index].price,
-      'foodImage': this.state.data[index].imageUrl
+      'foodImage': this.state.data[index].imageUrl,
+      'amount' : 1
      });
 
-     console.log(this.state.orderDetails);  
+     console.log(this.state.orderDetails.orderList);  
 
     //this.setState({ amount: this.state.amount + 1 });
 
@@ -87,9 +87,11 @@ export default class OrderFood extends React.Component {
         <FlatList
           style={{ flex: 1 }}
           data={this.state.data}
+          ItemSeparatorComponent={this.FlatListItemSeparator}
           renderItem={({ item, index }) => {
             return (
-              <TouchableOpacity onPress={() => this.orderFood(item.key, index)}>
+              <TouchableOpacity  
+              onPress={() => this.orderFood(item.key, index)}>
                 <View
                   style={styles.itemContent}
                 >
@@ -104,6 +106,7 @@ export default class OrderFood extends React.Component {
                       {item.name}
                     </Text>
                     <Text style={{ color: '#000000' }}>{item.price} $</Text>
+                    <Text >{item.description} </Text>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -118,6 +121,7 @@ export default class OrderFood extends React.Component {
             height: 50,
             backgroundColor: 'red',
             flexDirection: 'row',
+
           }}
         >
           <Image
@@ -126,6 +130,7 @@ export default class OrderFood extends React.Component {
               height: 35,
               marginTop: 10,
               marginLeft: 20,
+
             }}
             source={require('../icons/icons8-favorite-cart-100.png')}
           ></Image>
@@ -164,13 +169,19 @@ const styles = StyleSheet.create({
   },
   itemContent: {
     flex: 1,
-    backgroundColor: 'white',
-    borderWidth: 1,
     flexDirection: 'row',
+    backgroundColor: '#ffffff',
     borderRadius: 10,
     marginTop: 15,
     marginLeft: 15,
     marginRight: 15,
+    shadowOpacity: 0.8,
+        shadowOffset: {
+          width: 0,
+          height: 2
+    },
+    shadowColor: 'blue',
+    shadowRadius: 2
   },
   imageFood: {
     width: 100,
