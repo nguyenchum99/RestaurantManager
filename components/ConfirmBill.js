@@ -1,7 +1,7 @@
 import {
     StyleSheet,
     View,
-    
+    Text
   } from 'react-native';
   import React, { Component } from 'react';
   import { DataTable } from 'react-native-paper';
@@ -14,51 +14,59 @@ import {
       this.itemRef = firebaseApp.database();
       this.state = {
          data: [],
+         nameTable: '',
+         total: '',
+         keyOrder: ''
          
       };
     }
   
     componentDidMount() {
-        const key = this.props.navigation.getParam('keyOrder');
-
-        this.itemRef.ref(`Orders/${key}`).child('orderList').on('value', (snapshot) =>{
-            var li = []
-            snapshot.forEach((child)=>{
-              li.push({
-                  foodKey: child.foodKey,
-                  foodName:child.val().foodName,
-                  foodPrice: child.val().foodPrice,
-                  amount: child.val().amount,
-               
-            });
-           
-          })
-         this.setState({data:li})
-         
-        })
-        
+        const key = this.props.navigation.getParam('key');
+        this.setState({keyOrder: key})
     }
 
 
-    // renderTable= ()=> {
-    //     //console.log(this.state.orderDetails.orderList[1].foodName)
-    //    // const lng = this.state.orderDetails.orderList.length;
-    //     for(var i = 0; i < 2; i++){
-    //         return (
+    renderTable() {
+        //console.log(this.state.orderDetails.orderList[1].foodName)
+       // const lng = this.state.orderDetails.orderList.length;
+        for(var i = 0; i < 2; i++){
+         
+            return (
             
-    //                 <DataTable.Row>
-    //                     <DataTable.Cell>{i}</DataTable.Cell>
-    //                     {/* <DataTable.Cell >{this.state.orderDetails.orderList[i].foodName}</DataTable.Cell>
-    //                     <DataTable.Cell >{this.state.orderDetails.orderList[i].foodPrice}</DataTable.Cell>
-    //                     <DataTable.Cell >{this.state.orderDetails.orderList[i].amount}</DataTable.Cell> */}
-    //                 </DataTable.Row> 
+                    <DataTable.Row>
+                        <DataTable.Cell>{i}</DataTable.Cell>
+                        <DataTable.Cell>{i}</DataTable.Cell>
+                        <DataTable.Cell>{i}</DataTable.Cell>
+                        <DataTable.Cell>{i}</DataTable.Cell>
+                   
+                    </DataTable.Row> 
     
-    //         )
-    //     }
-    // }
+            )
+        }
+    }
   
     render() {
     
+        this.itemRef.ref(`Orders/${this.state.keyOrder}`).on('value', (snapshot) =>{
+            this.state.total = snapshot.child('total').val();  
+        });
+    
+        //this.itemRef.ref(`Orders/${this.state.keyOrder}/orderList`).on('value', (snapshot) =>{
+        //     var li = [];
+        //     snapshot.forEach((child) => {
+        //         li.push({
+        //           key: child.key,
+        //           name: child.val().foodName,
+        //           price: child.val().foodPrice,
+        //           amount: child.val().amount,
+        //         });
+        //       });      
+        //       this.setState({data: li})
+        //     console.log(this.state.data);
+        // });
+          
+
       return (
        <View>
             <DataTable>
@@ -69,17 +77,8 @@ import {
                     <DataTable.Title >Số lượng</DataTable.Title>
                 </DataTable.Header>
                 
-                {/* <View>
-                    {this.renderTable()}
-                </View> */}
-                
-                <DataTable.Row>
-                    <DataTable.Cell>1</DataTable.Cell>
-                    <DataTable.Cell ></DataTable.Cell>
-                    <DataTable.Cell >12000</DataTable.Cell>
-                    <DataTable.Cell >3</DataTable.Cell>
-                </DataTable.Row>
-
+                <View>{this.renderTable()}</View>
+            
                 <DataTable.Pagination
                 page={1}
                 numberOfPages={3}
@@ -89,6 +88,7 @@ import {
                 label="1-2 of 6"
                 />
             </DataTable>
+            <Text>tong tien: {this.state.total}</Text>
        </View>
     
       );

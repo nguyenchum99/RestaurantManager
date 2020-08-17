@@ -2,17 +2,12 @@ import { StatusBar } from 'expo-status-bar';
 
 import {
   StyleSheet,
-  Text,
   View,
-  TextInput,
-  Button,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
   Image,
 } from 'react-native';
 import React, { Component } from 'react';
-
+import ChartMonth from '../components/StatisticalMonth';
+import SalesDay from '../components/StatisticalDay';
 export default class HistoryManager extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { params = {} } = navigation.state;
@@ -27,13 +22,18 @@ export default class HistoryManager extends React.Component {
   };
 
   render() {
-    return <View style={styles.containerView}></View>;
+    return (
+      <View style={styles.containerView}>
+          <SalesDay></SalesDay>
+          {/* <ChartMonth></ChartMonth> */}
+      </View>
+    )
   }
 }
 
 const styles = StyleSheet.create({
   containerView: {
     flex: 1,
-    backgroundColor: 'red',
+    backgroundColor: '#ffffff'
   },
 });

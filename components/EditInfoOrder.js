@@ -38,10 +38,6 @@ export default class EditInfoOrder extends React.Component{
 
      render(){
         firebaseApp.database().ref(`Tables/${this.state.key}`).once('value', (snapshot) => {
-        //   const userObj = snapshot.val();
-        //   this.state.tableName = snapshot.val().name;
-        //  // this.state.tableStatus = snapshot.val().status;
-        //   this.state.amountPeople = snapshot.val().amount;
             this.state.tableName = snapshot.child('name').val();
             this.state.amountPeople = snapshot.child('amount').val();
             this.state.tableStatus = snapshot.child('status').val();

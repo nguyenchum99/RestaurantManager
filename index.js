@@ -6,5 +6,8 @@ import App from './App';
 import FlatListFoods from './components/FlatListFoods';
 import FlatListTables from './components/FlatListTables';
 import AppNavigator from './navigation/AppNavigator';
+import HistoryManager from './screens/History';
+
+
 registerRootComponent(App);
 

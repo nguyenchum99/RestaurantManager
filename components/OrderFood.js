@@ -175,13 +175,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginLeft: 15,
     marginRight: 15,
-    shadowOpacity: 0.8,
-        shadowOffset: {
-          width: 0,
-          height: 2
-    },
-    shadowColor: 'blue',
-    shadowRadius: 2
+    
   },
   imageFood: {
     width: 100,

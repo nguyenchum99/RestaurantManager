@@ -24,6 +24,7 @@ export default class AddInfoOrder extends React.Component {
       tableName: '',
       tableStatus: false,
       tableAmount: '',
+      chairAmount: ''
     };
   }
 
@@ -36,6 +37,7 @@ export default class AddInfoOrder extends React.Component {
       name: this.state.tableName,
       status: this.state.tableStatus,
       amount: this.state.tableAmount,
+      chair: this.state.chairAmount,
       phone: '',
     });
 
@@ -43,6 +45,7 @@ export default class AddInfoOrder extends React.Component {
       tableName: '',
       tableStatus: '',
       tableAmount: '',
+      chairAmount: ''
     });
     this.refs.myModal.close();
   };
@@ -72,10 +75,18 @@ export default class AddInfoOrder extends React.Component {
 
         <TextInput
           style={styles.input}
-          placeholder="Số lượng"
+          placeholder="Số lượng khách hiện tại"
           keyboardType="numeric"
           onChangeText={(tableAmount) => this.setState({ tableAmount })}
           value={this.state.tableAmount}
+        ></TextInput>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Số lượng ghế"
+          keyboardType="numeric"
+          onChangeText={(chairAmount) => this.setState({ chairAmount })}
+          value={this.state.chairAmount}
         ></TextInput>
 
         <Button title="Thêm" onPress={() => this.addInfoOrderTable()} />
