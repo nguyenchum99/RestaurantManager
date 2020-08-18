@@ -64,17 +64,6 @@ export default class OrderFood extends React.Component {
 
      console.log(this.state.orderDetails.orderList);  
 
-    //this.setState({ amount: this.state.amount + 1 });
-
-    // this.itemRef.ref('Orders').child(this.state.createAt).child(this.state.nameTable).child('orderList').push({
-    //   keyFood: key,
-    //   nameFood: this.state.data[index].name,
-    //   priceFood: this.state.data[index].price,
-    //   amountFood: 1
-
-    // });
-
-    // orderList.map((item, index) => <Item key={index} />)
   }
 
   render() {
@@ -82,8 +71,8 @@ export default class OrderFood extends React.Component {
     //var {amountOrder} = this.state.orderDetails.orderList.length; 
     return (
       <View style={styles.containerView}>
-    
-        <Text style={styles.title}> Menu </Text>
+
+      {/* list food */}
         <FlatList
           style={{ flex: 1 }}
           data={this.state.data}
@@ -105,8 +94,8 @@ export default class OrderFood extends React.Component {
                     <Text style={styles.nameFood}>
                       {item.name}
                     </Text>
-                    <Text style={{ color: '#000000' }}>{item.price} $</Text>
-                    <Text >{item.description} </Text>
+                    <Text style={styles.text}>{item.price} $</Text>
+                    <Text style={styles.text}>{item.description} </Text>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -116,27 +105,14 @@ export default class OrderFood extends React.Component {
           ref={'flatList'}
         />
 
-        <View
-          style={{
-            height: 50,
-            backgroundColor: 'red',
-            flexDirection: 'row',
-
-          }}
-        >
+        <View style = {styles.cartView}>
           <Image
-            style={{
-              width: 35,
-              height: 35,
-              marginTop: 10,
-              marginLeft: 20,
-
-            }}
+            style={ styles.imageCart}
             source={require('../icons/icons8-favorite-cart-100.png')}
           ></Image>
 
           <Text
-            style={styles.cartView}>{this.state.amountOrder}</Text>
+            style={styles.cartText}>{this.state.amountOrder}</Text>
 
 
           <TouchableOpacity
@@ -175,6 +151,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginLeft: 15,
     marginRight: 15,
+    backgroundColor: '#ff4d4d'
     
   },
   imageFood: {
@@ -193,9 +170,19 @@ const styles = StyleSheet.create({
     flex: 1,   
   },
   nameFood: {
-    fontSize: 15, color: '#3897f1', fontWeight: 'bold'
+    fontSize: 15, 
+    color: '#ffffff', 
+    fontWeight: 'bold'
+  },
+  text: {
+    color: '#ffffff', 
   },
   cartView: {
+    height: 50,
+    backgroundColor: 'red',
+    flexDirection: 'row',
+  },
+  cartText: {
     color: '#ffffff',
     fontWeight: 'bold',
     height: 30,
@@ -209,5 +196,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginLeft: 150,
     marginTop: 10,   
+  },
+  imageCart: {
+    width: 35,
+    height: 35,
+    marginTop: 10,
+    marginLeft: 20,
   }
 });

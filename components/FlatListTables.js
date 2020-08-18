@@ -11,109 +11,7 @@ import EditInfoOrder from './EditInfoOrder';
 
 
 //render item flatlist
-class FlatListItem extends Component {
 
-    constructor(props){
-        super(props);
-        this.state = {
-            activeRowKey: null,
-           // backgroundColor: '#ffffff'
-             
-        }
-      
-    }
-
-
-    //check status table is busy or empty
-    checkStatus(){
-        if(this.props.item.amount != 0)
-            return <Text style = {{color: 'red'}}>Đã có</Text>;
-        else {
-            return <Text  style = {{color: 'blue'}}>Trống</Text>;
-
-        }           
-    }
-
-    orderFood= ()=> {
-        console.log(error)
-        this.props.navigation.navigate('food');
-    }
-
-    editInfoOrder = ()=> {
-        this.props.parentFlatList.refs.editModal
-        .showEditModal(firebaseApp.database().ref('Tables')
-        .child(this.state.activeRowKey), this);
-    }
-  
-    render(){
-        // const swipeoutSetting = {
-        //     autoClose: true,
-        //     onClose: (secId, rowId, direction) => {
-        //         if(this.state.activeRowKey != null)
-        //             this.setState({activeRowKey: null});
-        //     },
-        //     onOpen: (secId, rowId, direction) => {
-        //         this.setState({activeRowKey: this.props.item.key});
-        //     },
-        //     right: [
-        //         {
-        //             onPress: ()=>{
-
-        //             },
-        //             text: 'Delete', type: 'delete'
-        //         },
-        //         {
-        //             onPress: () =>{
-        //                 this.props.parentFlatList.refs.editModal
-        //                 .showEditModal(firebaseApp.database().ref('Tables')
-        //                 .child(this.state.activeRowKey), this);
-
-        //             },
-        //             text: 'Edit', type: 'primary'
-        //         }
-        //     ],
-        //     rowId: this.props.index,
-        //     sectionId: 1,
-
-        // }
-        return (
-            <View style ={{
-                flex: 1,
-                flexDirection: 'row',
-                borderRadius: 10,
-                marginTop: 15,
-                marginLeft: 15,
-                marginRight: 15,
-                shadowOpacity: 0.8,
-                shadowOffset: {
-                  width: 0,
-                  height: 2
-                },
-                shadowColor: 'blue',
-                shadowRadius: 2,
-                backgroundColor: '#e6f9ff'
-                }}>
-                  
-                    <View style = {{flexDirection: 'column', marginLeft: 10, marginTop: 10,marginBottom: 10}}>
-                        <Text style = {{fontSize: 15, color: '#3897f1',fontWeight: 'bold'}}>{this.props.item.name}</Text>
-                        <Text  style = {{color: '#000000'}}>Số lượng khách hiện tại: {this.props.item.amount}</Text>
-                        <Text  style = {{color: '#000000'}}>Tình trạng đặt bàn: {this.checkStatus()}</Text>
-                        <Text  style = {{color: '#000000'}}>Số ghế: {this.props.item.chair}</Text>
-                        <Text  style = {{color: '#000000'}}>SĐT đặt bàn: {this.props.item.phone}</Text>         
-                    </View> 
-
-                    <View onPress = {() => this.editInfoOrder()}>
-                        <Image style={{width: 35, height: 35, marginLeft: 150, marginTop: 10}}
-                        source = {require('../icons/icons8-edit-property-64.png')}
-                        ></Image>
-                    </View>
-                
-            </View>
-           
-           
-        );
-    }
-}
 
 
 export default class FlatListTables extends React.Component{
@@ -141,8 +39,7 @@ export default class FlatListTables extends React.Component{
                 status: child.val().status,
                 amount: child.val().amount,
                 phone: child.val().phone,
-                chair: child.val().chair,
-                
+                chair: child.val().chair,        
 
           })
         })
@@ -173,15 +70,25 @@ export default class FlatListTables extends React.Component{
         
      }
 
+     checkStatus =(amount)=>{
+        if(amount != 0)
+            return <Text style = {{color: 'red'}}>Đã có</Text>;
+        else {
+            return <Text  style = {{color: 'blue'}}>Trống</Text>;
+
+        }           
+    }
+
 
      onPressAdd= () => {
         //  alert("you add item");
         this.refs.addModal.showAddModal();
      }
 
-     showAlert = (name) => {
+     showAlert = (name, key) => {
+        this.setState({deletedRowKey: key});
         Alert.alert(
-           "",
+           "Thông tin bàn",
            "",
             [
               {
@@ -192,8 +99,17 @@ export default class FlatListTables extends React.Component{
               { text: "Chọn món", onPress: () => this.props.navigation.navigate('Menu', {
                     nameTable: name,
                 
-                    })
+                })
+              },{
+                text: "Thông tin",
+                onPress: () =>{
+                    this.refs.editModal
+                        .showEditModal(firebaseApp.database().ref('Tables')
+                        .child(this.state.deletedRowKey), this);
                 }
+
+              }
+
             ],
             { cancelable: false }
           );
@@ -225,28 +141,32 @@ export default class FlatListTables extends React.Component{
                 </TouchableHighlight>
 
             </View>
-            <Text style={{fontWeight: 'bold', fontSize: 15, marginTop: 20, marginLeft: 20}}>Danh sách bàn</Text>
 
             <FlatList  
                 data = {this.state.data} 
                 renderItem={ ({item, index}) => {
                     return(
-                        <TouchableOpacity 
-                        // onPress = {() => this.props.navigation.navigate('Menu', {
-                        //     nameTable: item.name,
-                        //     time: new Date()
-                        // })}
-
-                        onPress = {() => this.showAlert(item.name)}
-                      
+                    <TouchableOpacity 
+                        onPress = {() => this.showAlert(item.name, item.key)}
                         >
-                            <FlatListItem 
-                                item = {item} 
-                                index= {index} parentFlatList={this}
-                            
-                            >  
-                            </FlatListItem>
-                        </TouchableOpacity>
+                        <View style ={styles.itemContent}>
+                  
+                            <View style = {styles.textContent}>
+                                <Text style = {styles.textName}>{item.name}</Text>
+                                <Text  style = {styles.text}>Số lượng khách hiện tại: {item.amount}</Text>
+                                <Text  style = {styles.text}>Tình trạng đặt bàn: {this.checkStatus(item.amount)}</Text>
+                                <Text  style = {styles.text}>Số ghế: {item.chair}</Text>
+                                <Text  style = {styles.text}>SĐT đặt bàn: {item.phone}</Text>         
+                            </View> 
+        
+                            <View>
+                                <Image style={{width: 35, height: 35, marginLeft: 150, marginTop: 10}}
+                                source = {require('../icons/icons8-edit-64.png')}
+                                ></Image>
+                            </View>
+                    
+                        </View>
+                    </TouchableOpacity>
                         
                     );
                     }
@@ -265,13 +185,34 @@ export default class FlatListTables extends React.Component{
   
   }
   
-  const styles = StyleSheet.create({
-    containerView: {
-      flex: 1,
-      backgroundColor: '#ffffff'
-     
-    },
-   
-  });
-  
-  
+  const styles = StyleSheet.create(
+    {
+        itemContent: {
+            flex: 1,
+            flexDirection: 'row',
+            borderRadius: 10,
+            marginTop: 15,
+            marginLeft: 15,
+            marginRight: 15,
+            backgroundColor: '#4db8ff'
+        },
+        textContent: {
+            flexDirection: 'column', 
+            marginLeft: 10, 
+            marginTop: 10,
+            marginBottom: 10,
+    
+        },
+        containerView: {
+            flex: 1,
+            backgroundColor: '#ffffff'
+        },
+        textName: {
+            fontSize: 15, 
+            color: '#ffffff',
+            fontWeight: 'bold'
+        },
+        text: {
+            color: '#ffffff'
+        }
+    });

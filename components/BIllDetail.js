@@ -72,15 +72,16 @@ export default class BillDetail extends React.Component {
             this.state.orderDetails.timeOrdered = this.state.time;
             this.state.orderDetails.total = this.state.totalOrder;
             var keyOrder = this.itemRef.ref('Orders').push().key;
-            // this.itemRef.ref(`Orders/${keyOrder}`).push({
-            //   orderDetails: this.state.orderDetails
-            // });
+
             this.itemRef.ref(`Orders/${keyOrder}`).set(this.state.orderDetails).then().catch();
             console.log(keyOrder)
            
             this.props.navigation.navigate('Confirm', {
-                key: keyOrder
+                key: keyOrder,
+                totalOrder: this.state.totalOrder,
+                time: this.state.time,
             });
+
           }
         },
         ],

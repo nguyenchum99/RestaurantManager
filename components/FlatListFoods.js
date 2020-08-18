@@ -59,7 +59,9 @@ class FlatListItem extends Component {
             },
           },
         ],
-        { cancelable: false }
+        { cancelable: false},
+            {  onDismiss: () => { console.log('Dismissed') }
+         },
       );
   }
 

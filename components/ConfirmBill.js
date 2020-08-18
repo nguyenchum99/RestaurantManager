@@ -1,102 +1,83 @@
-import {
-    StyleSheet,
-    View,
-    Text
-  } from 'react-native';
-  import React, { Component } from 'react';
-  import { DataTable } from 'react-native-paper';
-  import { firebaseApp } from '../components/FirebaseConfig';
+import React, { Component } from 'react';
+import { StyleSheet, View, ScrollView , Text} from 'react-native';
+import { Table, Row, Rows } from 'react-native-table-component';
+import { firebaseApp } from '../components/FirebaseConfig';
 
-  
-  export default class ConfirmBill extends React.Component {
-    constructor(props) {
-      super(props);
-      this.itemRef = firebaseApp.database();
-      this.state = {
-         data: [],
-         nameTable: '',
-         total: '',
-         keyOrder: ''
-         
-      };
-    }
-  
-    componentDidMount() {
-        const key = this.props.navigation.getParam('key');
-        this.setState({keyOrder: key})
-    }
-
-
-    renderTable() {
-        //console.log(this.state.orderDetails.orderList[1].foodName)
-       // const lng = this.state.orderDetails.orderList.length;
-        for(var i = 0; i < 2; i++){
-         
-            return (
-            
-                    <DataTable.Row>
-                        <DataTable.Cell>{i}</DataTable.Cell>
-                        <DataTable.Cell>{i}</DataTable.Cell>
-                        <DataTable.Cell>{i}</DataTable.Cell>
-                        <DataTable.Cell>{i}</DataTable.Cell>
-                   
-                    </DataTable.Row> 
-    
-            )
-        }
-    }
-  
-    render() {
-    
-        this.itemRef.ref(`Orders/${this.state.keyOrder}`).on('value', (snapshot) =>{
-            this.state.total = snapshot.child('total').val();  
-        });
-    
-        //this.itemRef.ref(`Orders/${this.state.keyOrder}/orderList`).on('value', (snapshot) =>{
-        //     var li = [];
-        //     snapshot.forEach((child) => {
-        //         li.push({
-        //           key: child.key,
-        //           name: child.val().foodName,
-        //           price: child.val().foodPrice,
-        //           amount: child.val().amount,
-        //         });
-        //       });      
-        //       this.setState({data: li})
-        //     console.log(this.state.data);
-        // });
-          
-
-      return (
-       <View>
-            <DataTable>
-                <DataTable.Header>
-                    <DataTable.Title>STT</DataTable.Title>
-                    <DataTable.Title >Tên món</DataTable.Title>
-                    <DataTable.Title >Đơn giá</DataTable.Title>
-                    <DataTable.Title >Số lượng</DataTable.Title>
-                </DataTable.Header>
-                
-                <View>{this.renderTable()}</View>
-            
-                <DataTable.Pagination
-                page={1}
-                numberOfPages={3}
-                onPageChange={page => {
-                    console.log(page);
-                }}
-                label="1-2 of 6"
-                />
-            </DataTable>
-            <Text>tong tien: {this.state.total}</Text>
-       </View>
-    
-      );
+export default class ConfirmBill extends Component {
+  constructor(props) {
+    super(props);
+    this.itemRef = firebaseApp.database();
+    this.state = {
+      tableHead: ['STT', 'Tên món', 'Đơn giá ($)', 'Số lượng', 'Thành tiền ($)'],
+      widthArr: [50, 120, 80, 60, 80],
+      key: '',
+      totalMoney: '',
+      timeOrder: ''
     }
   }
-  
-  const styles = StyleSheet.create({
-   
-  
+
+  componentDidMount(){
+    const key = this.props.navigation.getParam('key');
+    const total = this.props.navigation.getParam('totalOrder');
+    const time = this.props.navigation.getParam('time');
+    this.setState({
+     key: key,
+     totalMoney: total,
+     timeOrder: time
+    });
+  }
+ 
+  render() {
+    const state = this.state;
+    const rowData = [];
+    this.itemRef.ref(`Orders/${this.state.key}/orderList`).on('value', (snapshot) => {
+        snapshot.forEach((child) => {
+            rowData.push([
+                Number(child.key) + 1,
+                child.val().foodName,
+                child.val().foodPrice,
+                child.val().amount,
+                Number(child.val().foodPrice) * Number( child.val().amount),
+            ]
+          );
+         
+        });
+        console.log(rowData)
+       
+      });
+    
+    return (
+        <View style={styles.container}>
+        <Text style = {styles.title}>Hóa đơn</Text>
+        <Text style = {styles.time}>Thời gian tạo: {this.state.timeOrder}</Text>
+        <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}}>
+          <Row data={state.tableHead} style={styles.head} textStyle={styles.text} widthArr={state.widthArr} />
+          <Rows data={rowData} textStyle={styles.text} widthArr={state.widthArr}/>
+        </Table>
+        
+        <Text style = {styles.textMoney}>Tổng hóa đơn: {this.state.totalMoney} $</Text>
+      </View>
+    )
+  }
+}
+ 
+const styles = StyleSheet.create({
+    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
+    head: { height: 40, backgroundColor: '#f1f8ff' },
+    text: {margin: 6},
+    textMoney: {
+        color: '#000000',
+        fontSize: 15,
+        marginTop: 30,
+        marginLeft: 200
+    },
+        color: 'red',
+        fontSize: 20,
+        fontWeight:'normal',
+        margin: 20
+    },
+    time: {
+        marginLeft: 20,
+        marginBottom: 20
+    }
   });
-  

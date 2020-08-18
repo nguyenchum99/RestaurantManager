@@ -16,19 +16,6 @@ import {
 
   export default class ChartMonth extends React.Component {
 
-    static navigationOptions = ({ navigation }) => {
-      const { params = {} } = navigation.state;
-      let tabBarLabel = 'Doanh thu theo tháng';
-      let tabBarIcon = () => (
-        <Image
-          source={require('../icons/icons8-combo-chart-48.png')}
-          style={{ width: 26, height: 26 }}
-        />
-      );
-      return { tabBarLabel, tabBarIcon };
-    };
-
-
     render() {
       return (
         <View style={styles.container}>

@@ -11,18 +11,6 @@ import {
   
   export default class SalesDay extends React.Component {
 
-    static navigationOptions = ({ navigation }) => {
-      const { params = {} } = navigation.state;
-      let tabBarLabel = 'Thống kê doanh số theo ngày';
-      let tabBarIcon = () => (
-        <Image
-          source={require('../icons/icons8-profit-analysis-48.png')}
-          style={{ width: 26, height: 26 }}
-        />
-      );
-      return { tabBarLabel, tabBarIcon };
-    };
-
     constructor(props) {
         super(props);
         this.itemRef = firebaseApp.database();
@@ -49,6 +37,7 @@ import {
         <View style={styles.container}>
           <Text style = {styles.title}>Thống kê theo ngày</Text>
           <View style = {styles.contentLayout}>
+              <Text style = {styles.textTime}>STT</Text>
               <Text style = {styles.textTime}>Thời gian xuất hóa đơn</Text>
               <Text style = {styles.textMoney}>Tổng tiền</Text>
           </View>
@@ -58,6 +47,7 @@ import {
           renderItem={({ item, index }) => {
             return (
                 <View style = {styles.content}>
+                    <Text style = {styles.time}>{index + 1}</Text>
                     <Text style = {styles.time}>{item.time}</Text>
                     <Text style = {styles.money} >{item.total} $</Text>
                 </View>
