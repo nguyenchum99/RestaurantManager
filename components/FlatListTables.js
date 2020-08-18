@@ -181,8 +181,8 @@ export default class FlatListTables extends React.Component{
 
      showAlert = (name) => {
         Alert.alert(
-            "Alert Title",
-            "My Alert Msg",
+           "",
+           "",
             [
               {
                 text: "Xem hóa đơn",

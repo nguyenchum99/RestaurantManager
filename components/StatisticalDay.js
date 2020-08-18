@@ -3,12 +3,25 @@ import {
     StyleSheet,
     View,
     Text,
-    FlatList
+    FlatList,
+    Image
   } from 'react-native';
   import React, { Component } from 'react';
   import { firebaseApp } from './FirebaseConfig';
   
   export default class SalesDay extends React.Component {
+
+    static navigationOptions = ({ navigation }) => {
+      const { params = {} } = navigation.state;
+      let tabBarLabel = 'Thống kê doanh số theo ngày';
+      let tabBarIcon = () => (
+        <Image
+          source={require('../icons/icons8-profit-analysis-48.png')}
+          style={{ width: 26, height: 26 }}
+        />
+      );
+      return { tabBarLabel, tabBarIcon };
+    };
 
     constructor(props) {
         super(props);
@@ -36,8 +49,8 @@ import {
         <View style={styles.container}>
           <Text style = {styles.title}>Thống kê theo ngày</Text>
           <View style = {styles.contentLayout}>
-              <Text style = {styles.textTime}>Thời gian</Text>
-              <Text style = {styles.textMoney}>Hóa đơn</Text>
+              <Text style = {styles.textTime}>Thời gian xuất hóa đơn</Text>
+              <Text style = {styles.textMoney}>Tổng tiền</Text>
           </View>
           <FlatList
           style={{ flex: 1 }}
@@ -66,7 +79,7 @@ import {
       backgroundColor: "#ffffff"
     },
     title :{
-        color: 'red',
+        color: '#3333cc',
         fontSize: 20,
         fontWeight: 'bold',
         margin: 20
@@ -90,7 +103,7 @@ import {
         color: '#000000',
         fontSize: 17,
         fontWeight: 'normal',
-        marginLeft: 150,
+        marginLeft: 50,
         color: '#3897f1',
     },
     time: {

@@ -20,7 +20,7 @@ import {
     }
   
     componentDidMount() {
-      const name = this.props.navigation.getParam('nameTable');
+      
       
     }
   

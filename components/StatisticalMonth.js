@@ -4,7 +4,8 @@ import {
     StyleSheet,
     View,
     Text,
-    Dimensions
+    Dimensions,
+    Image
   } from 'react-native';
   import React, { Component } from 'react';
   import { firebaseApp } from './FirebaseConfig';
@@ -13,8 +14,21 @@ import {
   } from "react-native-chart-kit";
 
 
-  
   export default class ChartMonth extends React.Component {
+
+    static navigationOptions = ({ navigation }) => {
+      const { params = {} } = navigation.state;
+      let tabBarLabel = 'Doanh thu theo tháng';
+      let tabBarIcon = () => (
+        <Image
+          source={require('../icons/icons8-combo-chart-48.png')}
+          style={{ width: 26, height: 26 }}
+        />
+      );
+      return { tabBarLabel, tabBarIcon };
+    };
+
+
     render() {
       return (
         <View style={styles.container}>

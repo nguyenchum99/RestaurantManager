@@ -5,15 +5,7 @@ import Swipeout from 'react-native-swipeout';
 import AddNewFood from './AddNewFood';
 import EditFood from './EditInfoFood';
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
-import RNFetchBlob from 'react-native-fetch-blob';
 
-const options = {
-  title: 'Select Image',
-  storageOptions: {
-    skipBackup: true,
-    path: 'images',
-  },
-};
 
 //render item flatlist
 class FlatListItem extends Component {
@@ -24,128 +16,74 @@ class FlatListItem extends Component {
     };
   }
 
-  // pickImageFood(){
-  //   ImagePicker.showImagePicker(options, (response) => {
-  //       this.setState({foodImage: ''})
-  //       if (response.didCancel) {
 
-  //       } else if (response.error) {
+  clickItemFood() {
+      //alert("sdjfsd")
+      this.setState({ activeRowKey: this.props.item.key });
+      Alert.alert(
+        'Món ăn',
+        '',
+        [
+          {
+            text: 'Xóa món ăn',
+            onPress: () => {
+              Alert.alert(
+                'Cảnh báo',
+                'Bạn có chắc muốn xóa không ?',
+                [
+                  {
+                    text: 'Không',
+                    onPress: () => console.log('Cancel'),
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'Có',
+                    onPress: () => {
+                      firebaseApp.database().ref('Foods').child(this.state.activeRowKey).remove();
+                      this.props.parentFlatList.refreshFlatList(this.state.activeRowKey);
+                    },
+                  },
+                ],
+                { cancelable: false }
+              );
+            },
+            style: 'cancel',
+          },
+          {
+            text: 'Sửa thông tin',
+            onPress: () => {
+              this.props.parentFlatList.refs.editModal.showEditModal(
+                firebaseApp.database().ref('Foods').child(this.state.activeRowKey),
+                this
+              );
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+  }
 
-  //       } else if (response.customButton) {
-  //       } else {
-  //         const source = { uri: response.uri };
-  //         this.setState({
-  //           foodImage: source,
-  //         });
-
-  //           // uploadImage(response.uri).then(url => this.setState({foodImage}))
-  //           // .catch(error =>console.log(error))
-
-  //         let source = {uri: response.uri};
-  //         this.setState({foodImage: source})
-  //       }
-  //     });
-  // }
 
   render() {
-    const swipeoutSetting = {
-      autoClose: true,
-      onClose: (secId, rowId, direction) => {
-        if (this.state.activeRowKey != null) this.setState({ activeRowKey: null });
-      },
-      onOpen: (secId, rowId, direction) => {
-        this.setState({ activeRowKey: this.props.item.key });
-      },
-      right: [
-        {
-          onPress: () => {
-            const deletingRow = this.state.activeRowKey;
-            Alert.alert(
-              'Cảnh báo',
-              'Bạn có chắc muốn xóa không ?',
-              [
-                {
-                  text: 'Không',
-                  onPress: () => console.log('Cancel'),
-                  style: 'cancel',
-                },
-                {
-                  text: 'Có',
-                  onPress: () => {
-                    firebaseApp.database().ref('Foods').child(deletingRow).remove();
-                    this.props.parentFlatList.refreshFlatList(deletingRow);
-                  },
-                },
-              ],
-              { cancelable: false }
-            );
-          },
-          text: 'Xóa',
-          type: 'delete',
-        },
-        {
-          onPress: () => {
-            // alert("Update");
-            this.props.parentFlatList.refs.editModal.showEditModal(
-              firebaseApp.database().ref('Foods').child(this.state.activeRowKey),
-              this
-            );
-          },
-          text: 'Sửa',
-          type: 'primary',
-        },
-      ],
-      rowId: this.props.index,
-      sectionId: 1,
-    };
+    
     return (
-      <Swipeout {...swipeoutSetting}>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'white',
-            flexDirection: 'row',
-            borderRadius: 10,
-            marginTop: 15,
-            marginLeft: 15,
-            marginRight: 15,
-            shadowOpacity: 0.8,
-            shadowOffset: {
-              width: 0,
-              height: 2
-            },
-            shadowColor: 'blue',
-            shadowRadius: 2
-
-          }}
-        >
-          {/* <TouchableOpacity  onPress = {() => {this.pickImageFood()}}>
-                            <Image style={{width: 80, height: 80,marginLeft: 10, marginTop: 10, marginBottom: 10}}
-                                source = {require('../icons/icons8-add-80.png')}
-                            ></Image> */}
-
+     
+      <TouchableOpacity   onPress = {() => this.clickItemFood()}>
+        <View style={styles.contentItem}>
           <Image
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: 50,
-              marginLeft: 10,
-              marginTop: 10,
-              marginBottom: 10,
-            }}
+            style={styles.imageItem}
             source={{ uri: this.props.item.imageUrl }}
           ></Image>
-          {/* </TouchableOpacity> */}
 
-          <View style={{ marginLeft: 10, height: 80, flexDirection: 'column', flex: 1 }}>
-            <Text style={{ fontSize: 15, color: '#3897f1', fontWeight: 'bold' }}>
+          <View style={styles.textItem}>
+            <Text style={styles.nameItem}>
               {this.props.item.name}
             </Text>
-            <Text>Giá: {this.props.item.price} $</Text>
-            <Text>Mô tả: {this.props.item.description}</Text>
+            <Text style = {styles.text}>Giá: {this.props.item.price} $</Text>
+            <Text style = {styles.text}>Mô tả: {this.props.item.description}</Text>
           </View>
         </View>
-      </Swipeout>
+      </TouchableOpacity>
     );
   }
 }
@@ -192,35 +130,8 @@ export default class FlatListFoods extends React.Component {
   render() {
     return (
       <View style={styles.containerView}>
-        {/* <AddNewFood/>   */}
-
-        <View
-          style={{
-            backgroundColor: '#3897f1',
-            flexDirection: 'row',
-            height: 60,
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ marginLeft: 20, fontWeight: 'bold', color: '#ffffff' }}>
-            Thêm mới món ăn
-          </Text>
-          <TouchableHighlight
-            style={{ marginLeft: 200 }}
-            underlayColor="#3897f1"
-            onPress={() => this.onPressAdd()}
-          >
-            <Image
-              style={{ width: 35, height: 35 }}
-              source={require('../icons/icons8-add-64.png')}
-            ></Image>
-          </TouchableHighlight>
-        </View>
-        <Text style={{ fontWeight: 'bold', fontSize: 15, marginTop: 20, marginLeft: 20 }}>
-          Menu
-        </Text>
         <FlatList
-          style={{ flex: 1 }}
+          style = {styles.flatList}
           data={this.state.data}
           renderItem={({ item, index }) => {
             return <FlatListItem item={item} index={index} parentFlatList={this}></FlatListItem>;
@@ -229,7 +140,7 @@ export default class FlatListFoods extends React.Component {
           ref={'flatList'}
           onContentSizeChange={() => this.refs.flatList.scrollToEnd()}
         />
-        <AddNewFood ref={'addModal'} parentFlatList={this}></AddNewFood>
+        {/* <AddNewFood ref={'addModal'} parentFlatList={this}></AddNewFood> */}
         <EditFood ref={'editModal'} parentFlatList={this}></EditFood>
       </View>
     );
@@ -240,4 +151,41 @@ const styles = StyleSheet.create({
   containerView: {
     flex: 1,
   },
+  contentItem: {
+      flex: 1,
+      backgroundColor: 'white',
+      flexDirection: 'row',
+      borderRadius: 10,
+      marginTop: 15,
+      marginLeft: 15,
+      marginRight: 15,
+      borderWidth: 1,
+      borderColor: '#ff4d4d',
+      backgroundColor: '#ff4d4d'
+  },
+  imageItem: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginLeft: 10,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  textItem: {
+    flex: 1,
+    marginLeft: 10,
+    height: 80, 
+    flexDirection: 'column',
+  },
+  nameItem: {
+    fontSize: 15, 
+    color: '#ffffff',
+    fontWeight: 'bold'
+  },
+  text: {
+    color: '#ffffff',
+  },
+  flatList: {
+    flex: 1
+  }
 });

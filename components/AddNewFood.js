@@ -1,5 +1,8 @@
 import { StyleSheet, Text, View, TextInput, 
-     Image, Platform, ActivityIndicator, Button, Dimensions} from 'react-native';
+     Image, ActivityIndicator, Button, Dimensions, 
+     Alert, KeyboardAvoidingView, 
+     TouchableWithoutFeedback,
+     Keyboard,} from 'react-native';
 import React, {Component} from 'react';
 import { firebaseApp } from './FirebaseConfig';
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
@@ -64,7 +67,6 @@ export default class AddNewFood extends React.Component{
           foodPrice: '',
           foodImage: '',
           foodCreateAt: '',
-          // dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => 1 != r2}),
         
         }
       }
@@ -85,28 +87,58 @@ export default class AddNewFood extends React.Component{
         });
       }
 
-      showAddModal(){
-        this.refs.myModal.open();
-      }
+      // showAddModal(){
+      //   this.refs.myModal.open();
+      // }
 
       addNewFood(){
-        this.itemRef.ref('Foods').push({
-          name: this.state.foodName,
-          description: this.state.foodDescription,
-          price: this.state.foodPrice,
-          imageUrl: this.state.foodImage,
-          createAt: this.state.foodCreateAt,
-          timeUpdate: '',
-        });
+
+        if(this.state.foodName.length == 0 ||
+          this.state.foodDescription.length == 0 ||
+          this.state.foodPrice.length == 0  ){
+            alert("Bạn phải nhập đầy đủ thông tin")
+          }else{
+            Alert.alert(
+              'Thông báo',
+              'Bạn có chắc muốn tạo món mới không ?',
+              [
+                {
+                  text: 'Không',
+                  onPress: () => console.log('Cancel'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Có',
+                  onPress: () => {
+                    this.itemRef.ref('Foods').push({
+                      name: this.state.foodName,
+                      description: this.state.foodDescription,
+                      price: this.state.foodPrice,
+                      imageUrl: this.state.foodImage,
+                      createAt: this.state.foodCreateAt,
+                      timeUpdate: '',
+                    });
+                
+                    this.setState({
+                      foodName: '',
+                      foodDescription: '',
+                      foodPrice: '',
+                      foodImage: '',
+                      foodCreateAt: ''
+                    })
+                    this.props.navigation.navigate('ListFood')
+                    return <ActivityIndicator size="small" color="#0000ff" />
+                   // this.props.navigation.navigate('ListFood')
+                    
+                  },
+                },
+              ],
+              { cancelable: false }
+            );
+
+          }
+
     
-        this.setState({
-          foodName: '',
-          foodDescription: '',
-          foodPrice: '',
-          foodImage: '',
-          foodCreateAt: ''
-        })
-       this.refs.myModal.close();
 
       }
 
@@ -136,60 +168,64 @@ export default class AddNewFood extends React.Component{
       render(){
       
         return (
+          
+          <KeyboardAvoidingView style={styles.containerView} behavior="padding">
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={styles.containerView}>
 
-          <Modal  ref = {"myModal"}
-            style = {{
-              justifyContent: 'center',
-              borderRadius: 10, 
-              shadowRadius: 10,
-              width: screen.width - 80,
-              height: 300
-             
-            }}           
-            position = 'center'
-            backdrop = {true}
-            onClosed ={() => {
-            }}
-            >
-            <Text style={{fontWeight: 'bold', fontSize: 15, marginLeft: 20}}>Thêm món mới</Text>
-           
-{/*          
-            <TouchableOpacity
-                onPress = {() => {this.pickImageFood()}}
-            >
-                <Text>Add Image Food</Text>
-                <Image style={{width: 40, height: 40}}
-                source= {require('../icons/icons8-add-image-40.png')}
-               ></Image>
-            </TouchableOpacity> */}
+                <View style ={styles.contentImage}>
+                  <TouchableOpacity
+                      onPress = {() => {this.pickImageFood()}}
+                  >
+                      <Text>Thêm ảnh</Text>
+                      <Image style={{width: 40, height: 40}}
+                      source= {require('../icons/icons8-add-image-40.png')}
+                    ></Image>
+                  </TouchableOpacity> 
 
-            {/* <Image source = {this.state.foodImage} style={{width: 100, height: 100}}></Image> */}
+                  <Image style = {styles.imageFood} source ={{ uri:'https://ameovat.com/wp-content/uploads/2016/05/cach-lam-kimbap-han-quoc8.jpg' }}></Image>
+                  
+                </View>
+            
+                <TextInput 
+                    style = {styles.input}
+                    placeholder="Tên món"
+                    onChangeText={(foodName) => this.setState({foodName})}
+                    value = {this.state.foodName}
+                    returnKeyType="next"
+                    onSubmitEditing={() => this.refs.textDescription.focus()}>
+                </TextInput>
+      
+                <TextInput 
+                    ref={'textDescription'}
+                    style = {styles.textDescription}
+                    placeholder="Mô tả..."
+                    // numberOfLines={10}
+                    // multiline={true}
+                    onChangeText={(foodDescription) => this.setState({foodDescription})}
+                    value = {this.state.foodDescription}
+                    returnKeyType="next"
+                    onSubmitEditing={() => this.refs.txtPrice.focus()}
+                    
+                ></TextInput>
+      
+                <TextInput 
+                    ref={'txtPrice'}
+                    style = {styles.input}
+                    placeholder="Giá"
+                    keyboardType = 'numeric'
+                    onChangeText={(foodPrice) => this.setState({foodPrice})}
+                    value = {this.state.foodPrice}
+                    returnKeyType="go">
+                </TextInput>
 
-            <TextInput 
-                style = {styles.input}
-                placeholder="Tên món"
-                onChangeText={(foodName) => this.setState({foodName})}
-                value = {this.state.foodName}>
-             </TextInput>
-  
-            <TextInput 
-                style = {styles.input}
-                placeholder="Mô tả"
-                onChangeText={(foodDescription) => this.setState({foodDescription})}
-                value = {this.state.foodDescription}
-            ></TextInput>
-  
-            <TextInput 
-                style = {styles.input}
-                placeholder="Giá"
-                keyboardType = 'numeric'
-                onChangeText={(foodPrice) => this.setState({foodPrice})}
-                value = {this.state.foodPrice}>
-            </TextInput>
+                <TouchableOpacity style = {styles.button} onPress= {() => this.addNewFood()}>
+                  <Text style = {styles.textButton}>Tạo món</Text>
+                </TouchableOpacity>
 
-            <Button title='Thêm' onPress= {() => this.addNewFood()} />
-                
-          </Modal>     
+            </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
         );
       }
 
@@ -198,15 +234,46 @@ export default class AddNewFood extends React.Component{
 
 const styles = StyleSheet.create({
     containerView: {
-      width: 350,
-      marginTop: 20,
-      marginLeft: 30,
+      flex: 1,
+      flexDirection: 'column'
+      
+    },
+    contentImage: {
+      flexDirection: 'row',
+      marginLeft: 20,
+      marginTop: 20
+    },
+    imageFood: {
+      height: 200,
+      width: 200,
+      borderRadius: 100
     },
     input: {
         borderWidth: 1,
-        borderColor: '#eaeaea',
-        margin: 10
+        borderColor: '#3399ff',
+        margin: 20,
+        borderRadius: 10
+    },
+    textDescription: {
+      margin: 20,
+      borderWidth: 1,
+      borderColor: '#3399ff',
+      borderRadius: 10
+      
+    },
+    button: {
+      margin: 20,
+      backgroundColor: '#3399ff',
+      height: 40,
+      borderRadius: 10
+    },
+    textButton: {
+      color: '#ffffff',
+      textAlign: 'center',
+      marginTop: 10
+      
     }
+
   });
   
   
