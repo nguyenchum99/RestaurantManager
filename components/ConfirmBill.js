@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
         marginTop: 30,
         marginLeft: 200
     },
+    title: {
         color: 'red',
         fontSize: 20,
         fontWeight:'normal',

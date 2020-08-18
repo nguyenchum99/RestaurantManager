@@ -8,14 +8,19 @@ import {
   } from 'react-native';
   import React, { Component } from 'react';
   import { firebaseApp } from './FirebaseConfig';
-  
+  import { Table, Row, Rows } from 'react-native-table-component';
+
+
+
   export default class SalesDay extends React.Component {
 
     constructor(props) {
         super(props);
         this.itemRef = firebaseApp.database();
         this.state = {
-            data: []
+            data: [],
+            tableHead: ['STT', 'Thời gian', 'Tổng tiền ($)'],
+            widthArr: [50, 120, 80],
         }
       }
     
@@ -23,10 +28,11 @@ import {
         this.itemRef.ref('Orders').on('value', (snapshot) => {
             var li = [];
             snapshot.forEach((child) => {
-              li.push({
-                time: child.val().timeOrdered,
-                total: child.val().total
-              });
+              li.push([
+                Number(child.key) + 1,
+                child.val().timeOrdered,
+                child.val().total
+              ]);
             });
             this.setState({ data: li });
           });
@@ -35,30 +41,13 @@ import {
     render() {
       return (
         <View style={styles.container}>
-          <Text style = {styles.title}>Thống kê theo ngày</Text>
-          <View style = {styles.contentLayout}>
-              <Text style = {styles.textTime}>STT</Text>
-              <Text style = {styles.textTime}>Thời gian xuất hóa đơn</Text>
-              <Text style = {styles.textMoney}>Tổng tiền</Text>
-          </View>
-          <FlatList
-          style={{ flex: 1 }}
-          data={this.state.data}
-          renderItem={({ item, index }) => {
-            return (
-                <View style = {styles.content}>
-                    <Text style = {styles.time}>{index + 1}</Text>
-                    <Text style = {styles.time}>{item.time}</Text>
-                    <Text style = {styles.money} >{item.total} $</Text>
-                </View>
-            )
-          }}
-          keyExtractor={(item) => item.key}
-          ref={'flatList'}
-          onContentSizeChange={() => this.refs.flatList.scrollToEnd()}
-        />
-         
-        </View>
+        <Text style = {styles.title}>Hóa đơn</Text>
+        <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}}>
+          <Row data={this.state.tableHead} style={styles.head} textStyle={styles.text} widthArr={this.state.widthArr} />
+          <Rows data={this.state.data} textStyle={styles.text} widthArr={this.state.widthArr}/>
+        </Table>
+        
+      </View>
       );
     }
   }
