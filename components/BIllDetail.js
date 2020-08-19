@@ -19,12 +19,11 @@ export default class BillDetail extends React.Component {
       orderDetails: {
       },
       totalOrder: 0,
-      time: ''
-      // listFood: [],
-      // tableHead: ['STT', 'Tên món', 'Đơn giá', 'Số lượng'],
-      // widthArr: [50, 200, 80, 50],
-      // tableData: [],
-      // rowData: []
+      time: '',
+      date: '',
+      month: '',
+      year: '',
+     
     };
   }
 
@@ -51,7 +50,11 @@ export default class BillDetail extends React.Component {
     this.setState({
       //Setting the value of the date time
       time:
-        date + '/' + month + '/' + year + ' ' + hours + ':' + min + ':' + sec,
+        hours + ':' + min + ':' + sec,
+      date: 
+        year + '-' + month + '-' + date,
+      month: month,
+      year: year
     });
   }
 
@@ -70,6 +73,9 @@ export default class BillDetail extends React.Component {
           },
           { text: 'OK', onPress: () => {
             this.state.orderDetails.timeOrdered = this.state.time;
+            this.state.orderDetails.dateOrdered = this.state.date;
+            this.state.orderDetails.monthOrdered = this.state.month;
+            this.state.orderDetails.yearOrdered = this.state.year;
             this.state.orderDetails.total = this.state.totalOrder;
             var keyOrder = this.itemRef.ref('Orders').push().key;
 
@@ -80,6 +86,7 @@ export default class BillDetail extends React.Component {
                 key: keyOrder,
                 totalOrder: this.state.totalOrder,
                 time: this.state.time,
+                date: this.state.date
             });
 
           }

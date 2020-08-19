@@ -9,10 +9,11 @@ export default class ConfirmBill extends Component {
     this.itemRef = firebaseApp.database();
     this.state = {
       tableHead: ['STT', 'Tên món', 'Đơn giá ($)', 'Số lượng', 'Thành tiền ($)'],
-      widthArr: [50, 120, 80, 60, 80],
+      widthArr: [40, 120, 80, 60, 80],
       key: '',
       totalMoney: '',
-      timeOrder: ''
+      timeOrder: '',
+      dateOrder: '',
     }
   }
 
@@ -20,10 +21,12 @@ export default class ConfirmBill extends Component {
     const key = this.props.navigation.getParam('key');
     const total = this.props.navigation.getParam('totalOrder');
     const time = this.props.navigation.getParam('time');
+    const date = this.props.navigation.getParam('date');
     this.setState({
      key: key,
      totalMoney: total,
-     timeOrder: time
+     timeOrder: time,
+     dateOrder: date
     });
   }
  
@@ -49,6 +52,7 @@ export default class ConfirmBill extends Component {
     return (
         <View style={styles.container}>
         <Text style = {styles.title}>Hóa đơn</Text>
+        <Text style = {styles.time}>Ngày: {this.state.dateOrder}</Text>
         <Text style = {styles.time}>Thời gian tạo: {this.state.timeOrder}</Text>
         <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}}>
           <Row data={state.tableHead} style={styles.head} textStyle={styles.text} widthArr={state.widthArr} />

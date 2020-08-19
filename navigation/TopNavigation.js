@@ -5,11 +5,13 @@ import ChartMonth from '../components/StatisticalMonth';
 import { createAppContainer } from 'react-navigation';
 import React, { Component } from 'react';
 import {Image} from 'react-native';
+import Calendars from '../components/Calendars';
+import StackCalendar from './StackCalendar';
 
 const TopNavigator = createMaterialTopTabNavigator(
     {
         SaleDay: { 
-            screen: SalesDay,
+            screen: StackCalendar,
             navigationOptions: {
               tabBarLabel:"Thống kê doanh số theo ngày",
               tabBarIcon: ({ tintColor }) => (
@@ -24,7 +26,7 @@ const TopNavigator = createMaterialTopTabNavigator(
         Month: { 
             screen: ChartMonth,
             navigationOptions: {
-              tabBarLabel:"Doanh thu theo tháng",
+              tabBarLabel:"Doanh thu của năm",
               tabBarIcon: ({ tintColor }) => (
                 <Image
                   source={require('../icons/icons8-combo-chart-48.png')}

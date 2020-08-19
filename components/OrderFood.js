@@ -22,7 +22,10 @@ export default class OrderFood extends React.Component {
         orderList: [],
         table: '',
         timeOrdered: '',
-        total: 0
+        dateOrdered: '',
+        total: 0,
+        monthOrdered: '',
+        yearOrdered: ''
       },
       backgroundColor: '#ffffff'
     };

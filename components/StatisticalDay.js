@@ -4,7 +4,8 @@ import {
     View,
     Text,
     FlatList,
-    Image
+    Image,
+    ScrollView
   } from 'react-native';
   import React, { Component } from 'react';
   import { firebaseApp } from './FirebaseConfig';
@@ -19,34 +20,45 @@ import {
         this.itemRef = firebaseApp.database();
         this.state = {
             data: [],
-            tableHead: ['STT', 'Thời gian', 'Tổng tiền ($)'],
-            widthArr: [50, 120, 80],
+            tableHead: ['STT', 'Mã hóa đơn', 'Thời gian xuất hóa đơn ', 'Tổng tiền ($)'],
+            widthArr: [50, 120,120, 80],
+            time: '',
         }
       }
     
       componentDidMount() {
-        this.itemRef.ref('Orders').on('value', (snapshot) => {
+        const time = this.props.navigation.getParam('time');
+        this.setState({time: time})
+        this.itemRef.ref('Orders').orderByChild('dateOrdered').equalTo(time).on('value', (snapshot) => {
             var li = [];
+            var index = 0;
             snapshot.forEach((child) => {
+              index = index + 1;
               li.push([
-                Number(child.key) + 1,
+                index,
+                child.key,
                 child.val().timeOrdered,
                 child.val().total
               ]);
             });
             this.setState({ data: li });
+           // console.log(li)
           });
+         
       }
 
     render() {
       return (
         <View style={styles.container}>
-        <Text style = {styles.title}>Hóa đơn</Text>
-        <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}}>
-          <Row data={this.state.tableHead} style={styles.head} textStyle={styles.text} widthArr={this.state.widthArr} />
-          <Rows data={this.state.data} textStyle={styles.text} widthArr={this.state.widthArr}/>
-        </Table>
-        
+          <Text style = {styles.title}>Thống kê hóa đơn</Text>
+          <Text style = {styles.textTime}>{this.state.time}</Text>
+       
+          <ScrollView style = {styles.table}>
+            <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}}>
+              <Row data={this.state.tableHead} style={styles.head} textStyle={styles.text} widthArr={this.state.widthArr} />
+              <Rows data={this.state.data} textStyle={styles.text} widthArr={this.state.widthArr}/>
+            </Table>
+          </ScrollView>
       </View>
       );
     }
@@ -56,6 +68,10 @@ import {
     container: {
       flex: 1,
       backgroundColor: "#ffffff"
+    },
+    table: {
+      marginLeft: 20,
+  
     },
     title :{
         color: '#3333cc',
@@ -76,6 +92,7 @@ import {
         fontWeight: 'normal',
         marginLeft: 20,
         color: '#3897f1',
+        marginBottom: 20
         
     },
     textMoney: {
