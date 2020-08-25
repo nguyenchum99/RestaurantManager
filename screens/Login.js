@@ -15,6 +15,8 @@ import React, { Component } from 'react';
 import { firebaseApp } from '../components/FirebaseConfig';
 import TabNavigator from '../navigation/TabNavigator';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import {GoogleSignin} from 'react-native-google-signin'; 
+
 
 export default class LoginForm extends React.Component {
   constructor(props) {
@@ -44,17 +46,6 @@ export default class LoginForm extends React.Component {
           { cancelable: false }
         );
 
-        // const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        // if (reg.test(this.state.email) === false){
-        //   alert("Email nhập sai định dạng");
-        // }
-        // else if(this.state.password.length > 6){
-        //   alert("Mật khẩu từ 6 ký tự trở lên");
-        // }
-        // else{
-
-        // }
-
         this.setState({
           email: '',
           password: '',
@@ -83,6 +74,20 @@ export default class LoginForm extends React.Component {
       alert('Email is invalid');
     }
   };
+
+  loginGoogle = () => {
+    GoogleSignin.signIn()
+    .then((data) => {
+      const credential = firebaseApp.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken);
+      return firebaseApp.auth().signInWithCredential(credential);
+
+    }).then((currentUser) => {
+      console.log(`Google login with user: ${JSON.stringify(currentUser.toJSON())}`)
+
+    }).catch((error) => {
+      console.log('Login fail')
+    })
+  }
 
   render() {
     return (
@@ -122,6 +127,14 @@ export default class LoginForm extends React.Component {
               >
                 <Text style={styles.buttonText}>Tạo tài khoản</Text>
               </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.buttonContainer}
+                onPress={() => this.loginGoogle()}
+              >
+                <Text style={styles.buttonText}>Login Google</Text>
+              </TouchableOpacity>
+
             </View>
           </View>
         </TouchableWithoutFeedback>

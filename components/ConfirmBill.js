@@ -28,6 +28,10 @@ export default class ConfirmBill extends Component {
      timeOrder: time,
      dateOrder: date
     });
+
+
+    //create table StatiscalMonth
+    
   }
  
   render() {

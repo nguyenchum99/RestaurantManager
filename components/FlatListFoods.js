@@ -1,8 +1,6 @@
 import { StyleSheet, Text, View, FlatList, Image, Alert } from 'react-native';
 import React, { Component } from 'react';
 import { firebaseApp } from '../components/FirebaseConfig';
-import Swipeout from 'react-native-swipeout';
-import AddNewFood from './AddNewFood';
 import EditFood from './EditInfoFood';
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -142,8 +140,9 @@ export default class FlatListFoods extends React.Component {
           ref={'flatList'}
           onContentSizeChange={() => this.refs.flatList.scrollToEnd()}
         />
-        {/* <AddNewFood ref={'addModal'} parentFlatList={this}></AddNewFood> */}
+      
         <EditFood ref={'editModal'} parentFlatList={this}></EditFood>
+    
       </View>
     );
   }

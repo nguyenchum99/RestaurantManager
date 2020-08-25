@@ -159,11 +159,7 @@ export default class FlatListTables extends React.Component{
                                 <Text  style = {styles.text}>SĐT đặt bàn: {item.phone}</Text>         
                             </View> 
         
-                            <View>
-                                <Image style={{width: 35, height: 35, marginLeft: 150, marginTop: 10}}
-                                source = {require('../icons/icons8-edit-64.png')}
-                                ></Image>
-                            </View>
+                            
                     
                         </View>
                     </TouchableOpacity>

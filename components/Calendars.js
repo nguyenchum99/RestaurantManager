@@ -15,6 +15,7 @@ import {
           super(props)
           this.state = {
               currentDay: new Date(),
+             
           }
       }
       componentDidMount() {

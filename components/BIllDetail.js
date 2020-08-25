@@ -10,6 +10,8 @@ import React, { Component } from 'react';
 import { firebaseApp } from '../components/FirebaseConfig';
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { Table, TableWrapper, Row } from 'react-native-table-component';
+import { TextInput } from 'react-native-paper';
+import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 
 export default class BillDetail extends React.Component {
   constructor(props) {
@@ -17,13 +19,13 @@ export default class BillDetail extends React.Component {
     this.itemRef = firebaseApp.database();
     this.state = {
       orderDetails: {
+        totalOrder: 0,
       },
-      totalOrder: 0,
+      //totalOrder: 0,
       time: '',
       date: '',
       month: '',
       year: '',
-     
     };
   }
 
@@ -35,6 +37,7 @@ export default class BillDetail extends React.Component {
     });
     
     var total = 0;
+  
     for(var i = 0; i < orders.orderList.length; i ++){
        total += Number(orders.orderList[i].foodPrice)
     }
@@ -72,7 +75,7 @@ export default class BillDetail extends React.Component {
             style: 'cancel',
           },
           { text: 'OK', onPress: () => {
-            this.state.orderDetails.timeOrdered = this.state.time;
+            this.state.orderDetails.timeOrdered = new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds();
             this.state.orderDetails.dateOrdered = this.state.date;
             this.state.orderDetails.monthOrdered = this.state.month;
             this.state.orderDetails.yearOrdered = this.state.year;
@@ -85,7 +88,7 @@ export default class BillDetail extends React.Component {
             this.props.navigation.navigate('Confirm', {
                 key: keyOrder,
                 totalOrder: this.state.totalOrder,
-                time: this.state.time,
+                time: new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds(),
                 date: this.state.date
             });
 
@@ -96,14 +99,9 @@ export default class BillDetail extends React.Component {
       );
   }
 
-  minusAmount(index) {
+  minusAmount(amount) {
  
-    const minus = Number(this.state.orderDetails.orderList[index].amount) - 1;
-    //let quatityFood = this.state.orderDetails.orderList[index].amount;
-
-    this.state.orderDetails.orderList[index].amount =   2;
-    this.setState({orderDetails: this.state.orderDetails})
-
+    amount = Number(amount) - 1;
   }
 
   render() {
@@ -120,10 +118,32 @@ export default class BillDetail extends React.Component {
               <View
                   style={styles.itemContent}
                 >
-                  <Image
-                    style={styles.imageFood}
-                    source={{ uri: item.foodImage }}
-                  ></Image>
+                  <View style = {{flexDirection: 'column', }}>
+
+                  <TouchableOpacity onPress = {(index) => {
+                      this.state.orderDetails.orderList.splice(index, 1)
+                      var money = Number(this.state.totalOrder) - Number(item.foodPrice)
+                      this.setState({totalOrder: money})
+                      //console.log(item)
+                      this.setState({orderDetails: this.state.orderDetails})
+                      
+                      console.log(this.state.orderDetails.orderList)
+                      this.props.navigation.goBack({
+                        orderDetails : this.state.orderDetails
+                      })
+                  }}>
+                      <Image
+                        style={styles.imageDelete}
+                        source={require('../icons/icons8-delete-64.png')}
+                      ></Image>
+                    </TouchableOpacity>
+
+                    <Image
+                      style={styles.imageFood}
+                      source={{ uri: item.foodImage }}
+                    ></Image>
+                  </View>
+                 
 
                   <View
                     style={styles.textContent}>
@@ -133,17 +153,26 @@ export default class BillDetail extends React.Component {
                       <Text style={{ color: '#000000' }}>{item.foodPrice} $</Text>
                    
                       <View style = {styles.addAmount}>
-                        <TouchableOpacity onPress = {() => this.minusAmount(index)}>
+                        <Text>Số lượng: </Text>
+                        {/* <TextInput 
+                          placeholder = {item.amount}
+                          placeholderColor="#c4c3cb"
+                          onChangeText={(amount) => this.setState)}
+                          //</View></View>/value={item.amount}
+                        //  autoCorrect={false}
+                          
+                        ></TextInput> */}
+                        {/* <TouchableOpacity onPress = {() => {this.minusAmount(item.amount, index)}}>
                             <Image style={{width: 30, height: 30}}
                               source = {require('../icons/icons8-minus-32.png/')}
                             ></Image>
                         </TouchableOpacity>
-                        <Text style = {{color: '#000000', marginTop: 5, marginLeft: 10, marginRight: 10}}>1</Text>
-                        <TouchableOpacity onPress = {() => item.amount - 1}>
+                        <Text style = {{color: '#000000', marginTop: 5, marginLeft: 10, marginRight: 10}}> {item.amount}</Text>
+                        <TouchableOpacity onPress = {() => {this.setState({amount: Number(item.amount) - 1})}}>
                             <Image style={{width: 30, height: 30}}
                               source = {require('../icons/icons8-add-48.png')}
                             ></Image>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                       </View>
                   
                   </View>
@@ -157,7 +186,7 @@ export default class BillDetail extends React.Component {
 
         <View style = {styles.contentTotal}>
           
-          <TouchableOpacity style = {styles.clickConfirm} onPress ={() => this.confirmOrder()}>
+          <TouchableOpacity style ={styles.clickConfirm} activeOpacity = {0.5} onPress ={() => this.confirmOrder()}>
             <Text style = {styles.textConfirm}>Xác nhận</Text>
           </TouchableOpacity>
           
@@ -199,8 +228,8 @@ const styles = StyleSheet.create({
     shadowRadius: 2
   },
   imageFood: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     borderRadius: 50,
     marginLeft: 10,
     marginTop: 10,
@@ -208,7 +237,7 @@ const styles = StyleSheet.create({
   },
   textContent: {
     marginLeft: 10,
-    marginTop: 10,
+    marginTop: 40,
     height: 80,
     flexDirection: 'column',
   
@@ -219,7 +248,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   contentTotal: {
-    margin: 20
+    marginTop: 30
   },
   textTotal: {
     color: 'red',
@@ -233,7 +262,10 @@ const styles = StyleSheet.create({
     borderColor: '#3897f1',
     borderRadius: 10,
     textAlign: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 20,
+    width: 300,
+    marginLeft: 50
   },
   textConfirm: {
     color: '#ffffff',
@@ -241,6 +273,11 @@ const styles = StyleSheet.create({
   },
   addAmount: {
     flexDirection: 'row'
+  },
+  imageDelete: {
+    width: 30,
+    height: 30,
+    borderRadius: 15
   }
 
 });

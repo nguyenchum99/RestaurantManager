@@ -7,7 +7,7 @@ import React, {Component} from 'react';
 import { firebaseApp } from './FirebaseConfig';
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import RNFetchBlob from 'react-native-fetch-blob';
-import Modal from 'react-native-modalbox';
+import ImagePicker from 'react-native-image-picker';
 
 const options = {
     title: 'Select Image',
@@ -21,40 +21,39 @@ const storage = firebaseApp.storage();
 const Blob = RNFetchBlob.polyfill.Blob;
 const fs = RNFetchBlob.fs;
 
+
+const uploadImage = (uri, mime = 'img/jpg') => {
+    return new Promise((resolve, reject) =>{
+        const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+        const sessionId = new Date().getTime();
+        let uploadBlob = null;
+        const imageRef = storage.ref('images').child(`${sessionId}.jpg`);
+
+        fs.readFile(uploadUri, 'base64')
+        .then((data) => {
+            return Blob.build(data, {type: `${mime}; BASE64`});
+
+        })
+        .then((blob)=>{
+            uploadBlob = blob
+            return imageRef.put(blob, {contentType: mime})
+        })
+        .then(() =>{
+            uploadBlob.close()
+            return imageRef.getDownloadURL()
+        })
+        .then((url) => {
+            resolve(url)
+        })
+        .catch((error) =>{
+            reject(error)
+        })
+    })
+  }
+
+
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
 window.Blob = Blob;
-
-
-// const uploadImage = (uri, mime = 'img/jpg') => {
-//     return new Promise((resolve, reject) =>{
-//         const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
-//         const sessionId = new Date().getTime();
-//         let uploadBlob = null;
-//         const imageRef = storage.ref('images').child(`${sessionId}.jpg`);
-
-//         fs.readFile(uploadUri, 'base64')
-//         .then((data) => {
-//             return Blob.build(data, {type: `${mime}; BASE64`});
-
-//         })
-//         .then((blob)=>{
-//             uploadBlob = blob
-//             return imageRef.put(blob, {contentType: mime})
-//         })
-//         .then(() =>{
-//             uploadBlob.close()
-//             return imageRef.getDownloadURL()
-//         })
-//         .then((url) => {
-//             resolve(url)
-//         })
-//         .catch((error) =>{
-//             reject(error)
-//         }
-//         )
-//     })
-// }
-
 var screen = Dimensions.get('window');
 export default class AddNewFood extends React.Component{
 
@@ -86,10 +85,6 @@ export default class AddNewFood extends React.Component{
             date + '/' + month + '/' + year + ' ' + hours + ':' + min + ':' + sec,
         });
       }
-
-      // showAddModal(){
-      //   this.refs.myModal.open();
-      // }
 
       addNewFood(){
 
@@ -137,33 +132,31 @@ export default class AddNewFood extends React.Component{
             );
 
           }
-
-    
-
       }
 
-      // pickImageFood(){
-      //   ImagePicker.showImagePicker(options, (response) => {
-      //       this.setState({foodImage: ''})
-      //       if (response.didCancel) {
-              
-      //       } else if (response.error) {
-              
-      //       } else if (response.customButton) {
-      //       } else {
-      //         const source = { uri: response.uri };
-      //         this.setState({
-      //           foodImage: source,
-      //         });
 
-      //           uploadImage(response.uri).then(url => this.setState({foodImage}))
-      //           .catch(error =>console.log(error))
 
-      //         // let source = {uri: response.uri};
-      //         // this.setState({foodImage: source})
-      //       }
-      //     });
-      // }
+      pickImageFood(){
+        ImagePicker.showImagePicker(options, (response) => {
+            this.setState({foodImage: ''})
+            if (response.didCancel) {
+              
+            } else if (response.error) {
+              
+            } else if (response.customButton) {
+            } else {
+              const source = { uri: response.uri };
+              console.log("source image:" + source)
+              this.setState({
+                foodImage: response.uri,
+              });
+
+              uploadImage(response.uri).then(url => this.setState({foodImage}))
+              .catch(error =>console.log(error))
+
+            }
+          });
+      }
 
       render(){
       
@@ -183,36 +176,42 @@ export default class AddNewFood extends React.Component{
                     ></Image>
                   </TouchableOpacity> 
 
-                  <Image style = {styles.imageFood} source ={{ uri:'https://ameovat.com/wp-content/uploads/2016/05/cach-lam-kimbap-han-quoc8.jpg' }}></Image>
+                  <Image style = {styles.imageFood}
+                   source ={{  uri: this.state.foodImage }}></Image>
                   
                 </View>
+
+                <Text style = {styles.text}>Tên món</Text>
             
                 <TextInput 
                     style = {styles.input}
-                    placeholder="Tên món"
+              
                     onChangeText={(foodName) => this.setState({foodName})}
                     value = {this.state.foodName}
                     returnKeyType="next"
                     onSubmitEditing={() => this.refs.textDescription.focus()}>
                 </TextInput>
+
+                <Text style = {styles.text}>Mô tả</Text>
       
                 <TextInput 
                     ref={'textDescription'}
                     style = {styles.textDescription}
-                    placeholder="Mô tả..."
-                    // numberOfLines={10}
-                    // multiline={true}
+                  
+                 
                     onChangeText={(foodDescription) => this.setState({foodDescription})}
                     value = {this.state.foodDescription}
                     returnKeyType="next"
                     onSubmitEditing={() => this.refs.txtPrice.focus()}
                     
                 ></TextInput>
+
+                <Text style = {styles.text}>Giá</Text>
       
                 <TextInput 
                     ref={'txtPrice'}
                     style = {styles.input}
-                    placeholder="Giá"
+                  
                     keyboardType = 'numeric'
                     onChangeText={(foodPrice) => this.setState({foodPrice})}
                     value = {this.state.foodPrice}
@@ -237,6 +236,9 @@ const styles = StyleSheet.create({
       flex: 1,
       flexDirection: 'column'
       
+    },
+    text: {
+      marginLeft: 20
     },
     contentImage: {
       flexDirection: 'row',

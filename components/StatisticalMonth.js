@@ -10,16 +10,18 @@ import {
   import React, { Component } from 'react';
   import { firebaseApp } from './FirebaseConfig';
   import {
-    LineChart
-  } from "react-native-chart-kit";
+    BarChart  } from "react-native-chart-kit";
 
 
   export default class ChartMonth extends React.Component {
 
     constructor(props){
       super(props)
+      this.itemRef= firebaseApp.database();
       this.state= {
         yearCurrent: '',
+        totalMonth: [1,1,1,1,1,1,1,1,1,1,1,1],
+        text: ''
       }
     }
 
@@ -27,51 +29,63 @@ import {
     //get current time
     componentDidMount(){
     
-     var year = new Date().getFullYear(); //Current Year
+      var year = new Date().getFullYear(); //Current Year
 
-     this.setState( {
-       yearCurrent: year
-     })
-    
+      this.setState( {
+        yearCurrent: year
+      })
+
+
+      let temp = [];
+      let total = 0;
+     
+      for(var i = 0; i < 12; i++){
+          //var total = 0;
+          total = 0;
+          let month = Number(i) + 1;
+          this.itemRef.ref('Orders').orderByChild('monthOrdered').equalTo(month)
+          .on('value', (snapshot) => {
+
+             console.log(snapshot)
+              snapshot.forEach((child) => {
+                console.log (child)
+                total += Number(child.val().total);
+              });
+              // console.log(total)
+              temp.push(total) 
+              this.setState({totalMonth: temp}) 
+            
+            });
+            console.log(total)
+            // temp.push(total) 
+            // this.setState({totalMonth: temp})  
+             total = 0;
+          //this.setState({totalMonth: temp})
+        } 
+     
     }
 
     render() {
+
+     console.log("total months: " +this.state.totalMonth)
       return (
         <View style={styles.container}>
           <Text style = {styles.title}>Thống kê theo tháng</Text>
+          
           <Text style = {styles.textTime}>Năm: {this.state.yearCurrent}</Text>
-          <LineChart
+          <BarChart
             data={{
-            labels: ["1", "2", "3", "4", "5", "6",
-                    "7", "8", "9", "10", "11", "12"],
-            datasets: [
-              {
-                data: [
-                  10, 20, 13, 67, 23, 30, 10, 10 , 10, 10, 11, 12
-                ]
-              }
-            ]
+              labels: ["1", "2", "3", "4", "5", "6",
+                      "7", "8", "9", "10", "11", "12"],
+              datasets: [ {data: this.state.totalMonth
+              }]
             }}
+
             width={Dimensions.get("window").width} // from react-native
             height={220}
             yAxisSuffix="$"
-            yAxisInterval={1} // optional, defaults to 1
-            chartConfig={{
-              backgroundColor: "#99ccff",
-              backgroundGradientFrom: "#99ccff",
-              backgroundGradientTo: "#99ccff",
-              decimalPlaces: 2, // optional, defaults to 2dp
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              style: {
-                  borderRadius: 16
-              },
-              propsForDots: {
-                  r: "6",
-                  strokeWidth: "2",
-                  stroke: "#3399ff"
-              }
-            }}
+            yAxisInterval={1} 
+            chartConfig={chartConfig}
             bezier
             style={{
               marginVertical: 8,
@@ -85,6 +99,19 @@ import {
     }
   }
   
+
+  const chartConfig = {
+    backgroundGradientFrom: "#33adff",
+   // backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: "#33adff",
+  //  backgroundGradientToOpacity: 0.5,
+    color: (opacity = 2) => `rgba(255, 255, 255, ${opacity})`,
+    strokeWidth: 2, // optional, default 3
+    barPercentage: 0.5,
+    useShadowColorFromDataset: false // optional
+  };
+
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,

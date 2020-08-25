@@ -23,7 +23,6 @@ export default class OrderFood extends React.Component {
         table: '',
         timeOrdered: '',
         dateOrdered: '',
-        total: 0,
         monthOrdered: '',
         yearOrdered: ''
       },
@@ -33,6 +32,10 @@ export default class OrderFood extends React.Component {
 
   componentDidMount() {
     const name = this.props.navigation.getParam('nameTable');
+    // const orders = this.props.navigation.getParam('orderDetails');
+    // this.setState({
+    //   orderDetails: orders,
+    // });
     //read flat list food
     this.itemRef.ref('Foods').on('value', (snapshot) => {
       var li = [];
@@ -190,8 +193,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     height: 30,
     width: 30,
-    marginTop: 20,
+    marginTop: 17,
     marginLeft: 10,
+    fontSize: 17
   },
   clickView: {
     borderWidth: 1,
