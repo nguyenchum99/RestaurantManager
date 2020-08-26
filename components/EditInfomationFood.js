@@ -157,7 +157,7 @@ export default class EditInfoFood extends React.Component{
 
         return (
        
-            <View   style = {styles.contentView}           
+            <View   style = {styles.containerView}           
             >
                 <Text style={styles.title}>Thông tin món ăn</Text>
                 <Text style={styles.foodName}>{this.state.newFoodName}</Text>
@@ -190,9 +190,6 @@ export default class EditInfoFood extends React.Component{
 
                     <Image style = {styles.imageFood}
                     source ={{  uri: this.state.newImage }}></Image>
-                     
-                    <Image style = {styles.imageFood2}
-                    source ={{  uri: this.state.newImage }}></Image>
                     
                 </View>
 
@@ -208,6 +205,8 @@ export default class EditInfoFood extends React.Component{
 const styles = StyleSheet.create({
     containerView: {
         flex: 1,
+        backgroundColor: '#ffffff',
+        flexDirection: 'column'
     },
     contentView: {
         flex: 1,
@@ -271,6 +270,7 @@ const styles = StyleSheet.create({
       imageFood: {
         height: 80,
         width: 80,
+        marginLeft: 20,
         borderRadius: 50
       },
       imageFood2: {

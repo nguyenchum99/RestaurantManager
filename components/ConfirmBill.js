@@ -29,8 +29,6 @@ export default class ConfirmBill extends Component {
      dateOrder: date
     });
 
-
-    //create table StatiscalMonth
     
   }
  

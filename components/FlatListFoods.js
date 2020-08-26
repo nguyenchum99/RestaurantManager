@@ -30,14 +30,6 @@ export default class FlatListFoods extends React.Component {
     });
   }
 
-  // refreshFlatList = (deletedKey) => {
-  //   this.setState((prevState) => {
-  //     return {
-  //       deletedRowKey: deletedKey,
-  //     };
-  //   });
-  // };
-
 
   clickItemFood =(key) => {
       Alert.alert(

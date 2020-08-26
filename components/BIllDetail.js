@@ -11,7 +11,7 @@ import { firebaseApp } from '../components/FirebaseConfig';
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { Table, TableWrapper, Row } from 'react-native-table-component';
 import { TextInput } from 'react-native-paper';
-import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
+import AddAmountFood from './AddAmountFood';
 
 export default class BillDetail extends React.Component {
   constructor(props) {
@@ -21,6 +21,7 @@ export default class BillDetail extends React.Component {
       orderDetails: {
         totalOrder: 0,
       },
+      listFood: [],
       //totalOrder: 0,
       time: '',
       date: '',
@@ -29,8 +30,10 @@ export default class BillDetail extends React.Component {
     };
   }
 
+
   componentDidMount() {
     const orders = this.props.navigation.getParam('orderDetails');
+    //console.log(orders)
     this.setState({
       orderDetails: orders,
       listFood: orders.orderList
@@ -82,8 +85,8 @@ export default class BillDetail extends React.Component {
             this.state.orderDetails.total = this.state.totalOrder;
             var keyOrder = this.itemRef.ref('Orders').push().key;
 
+            console.log("delete food: " + this.state.orderDetails) 
             this.itemRef.ref(`Orders/${keyOrder}`).set(this.state.orderDetails).then().catch();
-            console.log(keyOrder)
            
             this.props.navigation.navigate('Confirm', {
                 key: keyOrder,
@@ -91,7 +94,6 @@ export default class BillDetail extends React.Component {
                 time: new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds(),
                 date: this.state.date
             });
-
           }
         },
         ],
@@ -99,13 +101,16 @@ export default class BillDetail extends React.Component {
       );
   }
 
-  minusAmount(amount) {
- 
-    amount = Number(amount) - 1;
-  }
+
+  //open modal add amount food
+  addAmountFood = (item) => {
+    //console.log(item)
+    this.refs.openModal.showModal(item);
+ }
+
 
   render() {
-  
+
     return (
       <View style = {styles.container} >
         <Text style={styles.title}>Đặt số lượng</Text>
@@ -120,62 +125,35 @@ export default class BillDetail extends React.Component {
                 >
                   <View style = {{flexDirection: 'column', }}>
 
-                  <TouchableOpacity onPress = {(index) => {
+                  <TouchableOpacity onPress = {() => {  
+                      console.log(index) 
                       this.state.orderDetails.orderList.splice(index, 1)
-                      var money = Number(this.state.totalOrder) - Number(item.foodPrice)
-                      this.setState({totalOrder: money})
-                      //console.log(item)
-                      this.setState({orderDetails: this.state.orderDetails})
-                      
-                      console.log(this.state.orderDetails.orderList)
-                      this.props.navigation.goBack({
-                        orderDetails : this.state.orderDetails
-                      })
-                  }}>
+                      this.setState({orderDetails: this.state.orderDetails}) 
+                    }}>
                       <Image
                         style={styles.imageDelete}
                         source={require('../icons/icons8-delete-64.png')}
                       ></Image>
                     </TouchableOpacity>
+                  </View>
 
+                  <TouchableOpacity style= {styles.itemCLick} 
+                  onPress= {() => { this.addAmountFood(item) }}>   
                     <Image
-                      style={styles.imageFood}
-                      source={{ uri: item.foodImage }}
-                    ></Image>
-                  </View>
-                 
+                        style={styles.imageFood}
+                        source={{ uri: item.foodImage }}
+                      ></Image>
+                    <View
+                      style={styles.textContent}>
+                        <Text style={styles.nameFood}>
+                            {item.foodName}
+                        </Text>
+                        <Text style={{ color: '#000000' }}>{item.foodPrice} $</Text>
+            
+                    </View>
 
-                  <View
-                    style={styles.textContent}>
-                      <Text style={styles.nameFood}>
-                          {item.foodName}
-                      </Text>
-                      <Text style={{ color: '#000000' }}>{item.foodPrice} $</Text>
-                   
-                      <View style = {styles.addAmount}>
-                        <Text>Số lượng: </Text>
-                        {/* <TextInput 
-                          placeholder = {item.amount}
-                          placeholderColor="#c4c3cb"
-                          onChangeText={(amount) => this.setState)}
-                          //</View></View>/value={item.amount}
-                        //  autoCorrect={false}
-                          
-                        ></TextInput> */}
-                        {/* <TouchableOpacity onPress = {() => {this.minusAmount(item.amount, index)}}>
-                            <Image style={{width: 30, height: 30}}
-                              source = {require('../icons/icons8-minus-32.png/')}
-                            ></Image>
-                        </TouchableOpacity>
-                        <Text style = {{color: '#000000', marginTop: 5, marginLeft: 10, marginRight: 10}}> {item.amount}</Text>
-                        <TouchableOpacity onPress = {() => {this.setState({amount: Number(item.amount) - 1})}}>
-                            <Image style={{width: 30, height: 30}}
-                              source = {require('../icons/icons8-add-48.png')}
-                            ></Image>
-                        </TouchableOpacity> */}
-                      </View>
-                  
-                  </View>
+                  </TouchableOpacity>
+            
               </View>
                  
             );
@@ -183,6 +161,8 @@ export default class BillDetail extends React.Component {
           keyExtractor={(item) => item.foodKey}
           ref={'flatList'} 
         />
+
+        <AddAmountFood ref={'openModal'} parentFlatList={this}></AddAmountFood>
 
         <View style = {styles.contentTotal}>
           
@@ -212,6 +192,11 @@ const styles = StyleSheet.create({
     marginLeft: 20, 
     color: '#000000'
   },
+  itemCLick: {
+    flexDirection: 'row',
+    flex: 1
+  },
+
   itemContent: {
     backgroundColor: 'white',
     flexDirection: 'row',
@@ -237,7 +222,7 @@ const styles = StyleSheet.create({
   },
   textContent: {
     marginLeft: 10,
-    marginTop: 40,
+    marginTop: 20,
     height: 80,
     flexDirection: 'column',
   
@@ -272,7 +257,8 @@ const styles = StyleSheet.create({
     margin: 5
   },
   addAmount: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    flex: 1
   },
   imageDelete: {
     width: 30,

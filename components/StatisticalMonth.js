@@ -28,26 +28,25 @@ import {
       const temp = [];
       let total = 0;
      
-      for(var i = 0; i < 12; i++){
+      for(let i = 0; i < 12; i++){
           //var total = 0;
-          total = 0;
-          let month = Number(i) + 1;
+          
+          let month = Number(i) + 1; 
           this.itemRef.ref('Orders').orderByChild('monthOrdered').equalTo(month)
           .on('value', (snapshot) => {
-           
+              total = 0;
+              //console.log(snapshot)
+              //console.log(`total: ${total}`)
               snapshot.forEach((child) => {
                 total += Number(child.val().total);
               });
-              console.log(total)
               temp[i] = total;
+              this.setState({totalMonth: temp}) 
             });
-            // console.log(total)
-            // temp[i] = total;
-            this.setState({totalMonth: temp}) 
+            
         } 
         console.log("total months: " +this.state.totalMonth)
 
-      //  this.setState({totalMonth: temp})
     }
 
     //get current time
@@ -65,7 +64,7 @@ import {
   
       return (
         <View style={styles.container}>
-          <Text>{this.state.totalMonth}</Text>
+          {/* <Text>{this.state.totalMonth}</Text> */}
           <Text style = {styles.title}>Thống kê theo tháng</Text>
           
           <Text style = {styles.textTime}>Năm: {this.state.yearCurrent}</Text>

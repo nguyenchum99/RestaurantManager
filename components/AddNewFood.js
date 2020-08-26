@@ -122,6 +122,7 @@ export default class AddNewFood extends React.Component{
                       foodDescription: '',
                       foodPrice: '',
                       foodImage: '',
+                      foodImage2: '',
                       foodCreateAt: ''
                     })
                     this.props.navigation.navigate('ListFood')
@@ -162,6 +163,32 @@ export default class AddNewFood extends React.Component{
           });
         
       }
+
+      pickImageFood2 = () =>{
+    
+        ImagePicker.showImagePicker(options, (response) => {
+            this.setState({foodImage2: ''})
+            if (response.didCancel) {
+              
+            } else if (response.error) {
+              
+            } else if (response.customButton) {
+            } else {
+              const source = { uri: response.uri };
+              console.log("source image:" + source)
+              this.setState({
+                foodImage2: response.uri,
+              });
+
+              uploadImage(response.uri).then(url => this.setState({foodImage2}))
+              .catch(error =>console.log(error))
+
+            }
+          });
+        
+      }
+
+      
 
       render(){
       
@@ -211,23 +238,28 @@ export default class AddNewFood extends React.Component{
                   <TouchableOpacity
                       onPress = {() => {this.pickImageFood()}}
                   >
-                      <Text>Thêm ảnh</Text>
+                      <Text>Ảnh 1</Text>
                       <Image style={{width: 40, height: 40}}
-                      source= {require('../icons/icons8-add-image-40.png')}
+                      source= {require('../icons/icons8-add-48.png')}
                     ></Image>
                   </TouchableOpacity> 
 
                   <Image style = {styles.imageFood}
                    source ={{  uri: this.state.foodImage }}></Image>
 
-                   {/* <TouchableOpacity
-                      onPress = {() => {this.pickImageFood()}}
-                    >
-                      <Image style={{width: 70, height: 70}}
-                      source= {require('../icons/icons8-add-80.png')}
+                  <TouchableOpacity
+                      style = {{marginLeft: 20}}
+                      onPress = {() => {this.pickImageFood2()}}
+                  >
+                      <Text>Ảnh 2</Text>
+                      <Image style={{width: 40, height: 40}}
+                      source= {require('../icons/icons8-add-48.png')}
                     ></Image>
-                  </TouchableOpacity>
-                   */}
+                  </TouchableOpacity> 
+
+                  <Image style = {styles.imageFood}
+                   source ={{  uri: this.state.foodImage2 }}></Image>
+
                 </View>
 
                 <TouchableOpacity style = {styles.button} onPress= {() => this.addNewFood()}>
@@ -259,9 +291,10 @@ const styles = StyleSheet.create({
       marginTop: 20
     },
     imageFood: {
-      height: 100,
-      width: 100,
-      borderRadius: 50
+      height: 80,
+      width: 80,
+      borderRadius: 50,
+      marginLeft: 20
     },
     input: {
       borderWidth: 1,

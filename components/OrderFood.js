@@ -32,11 +32,7 @@ export default class OrderFood extends React.Component {
 
   componentDidMount() {
     const name = this.props.navigation.getParam('nameTable');
-    // const orders = this.props.navigation.getParam('orderDetails');
-    // this.setState({
-    //   orderDetails: orders,
-    // });
-    //read flat list food
+  
     this.itemRef.ref('Foods').on('value', (snapshot) => {
       var li = [];
       snapshot.forEach((child) => {
@@ -57,7 +53,7 @@ export default class OrderFood extends React.Component {
 
   orderFood (key, index){
     
-    this.setState({backgroundColor: '#ccffe6'})
+    
     this.setState({amountOrder: this.state.amountOrder + 1})
      this.state.orderDetails.orderList.push({
       'foodKey': this.state.data[index].key,
@@ -68,17 +64,15 @@ export default class OrderFood extends React.Component {
       'amount' : 1
      });
 
-     console.log(this.state.orderDetails.orderList);  
+    //console.log(this.state.orderDetails);  
 
   }
 
   render() {
-    
-    //var {amountOrder} = this.state.orderDetails.orderList.length; 
+ 
     return (
       <View style={styles.containerView}>
 
-      {/* list food */}
         <FlatList
           style={{ flex: 1 }}
           data={this.state.data}
@@ -170,7 +164,7 @@ const styles = StyleSheet.create({
   },
   textContent: {
     marginLeft: 10,
-    marginTop: 20,
+    marginTop: 10,
     height: 80,
     flexDirection: 'column',
     flex: 1,   
