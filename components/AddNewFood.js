@@ -64,8 +64,11 @@ export default class AddNewFood extends React.Component{
           foodName: '',
           foodDescription: '',
           foodPrice: '',
-          foodImage: '',
+          foodImage: '../icons/icons8-add-image-40.png',
           foodCreateAt: '',
+          foodImage2: '',
+          click: 0,
+          amount: 0,
         
         }
       }
@@ -89,7 +92,6 @@ export default class AddNewFood extends React.Component{
       addNewFood(){
 
         if(this.state.foodName.length == 0 ||
-          this.state.foodDescription.length == 0 ||
           this.state.foodPrice.length == 0  ){
             alert("Bạn phải nhập đầy đủ thông tin")
           }else{
@@ -110,6 +112,7 @@ export default class AddNewFood extends React.Component{
                       description: this.state.foodDescription,
                       price: this.state.foodPrice,
                       imageUrl: this.state.foodImage,
+                      image2: this.state.foodImage2,
                       createAt: this.state.foodCreateAt,
                       timeUpdate: '',
                     });
@@ -136,7 +139,8 @@ export default class AddNewFood extends React.Component{
 
 
 
-      pickImageFood(){
+      pickImageFood= () =>{
+    
         ImagePicker.showImagePicker(options, (response) => {
             this.setState({foodImage: ''})
             if (response.didCancel) {
@@ -156,6 +160,7 @@ export default class AddNewFood extends React.Component{
 
             }
           });
+        
       }
 
       render(){
@@ -165,6 +170,42 @@ export default class AddNewFood extends React.Component{
           <KeyboardAvoidingView style={styles.containerView} behavior="padding">
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
               <View style={styles.containerView}>
+
+                <Text style = {styles.text}>Tên món</Text>
+            
+                <TextInput 
+                    style = {styles.input}
+                    onChangeText={(foodName) => this.setState({foodName})}
+                    value = {this.state.foodName}
+                    //returnKeyType="next"
+                    //onSubmitEditing={() => this.refs.textDescription.focus()}
+                    >
+                </TextInput>
+
+                <Text style = {styles.text}>Mô tả</Text>
+      
+                <TextInput 
+                    //ref={'textDescription'}
+                    style = {styles.inputDescription}
+                    onChangeText={(foodDescription) => this.setState({foodDescription})}
+                    value = {this.state.foodDescription}
+                    //returnKeyType="next"
+                    //onSubmitEditing={() => this.refs.txtPrice.focus()}
+                    
+                ></TextInput>
+
+                <Text style = {styles.text}>Đơn giá ($)</Text>
+      
+                <TextInput 
+                   // ref={'txtPrice'}
+                    style = {styles.input}
+                  
+                    keyboardType = 'numeric'
+                    onChangeText={(foodPrice) => this.setState({foodPrice})}
+                    value = {this.state.foodPrice}
+                   // returnKeyType="go"
+                   >
+                </TextInput>
 
                 <View style ={styles.contentImage}>
                   <TouchableOpacity
@@ -178,45 +219,16 @@ export default class AddNewFood extends React.Component{
 
                   <Image style = {styles.imageFood}
                    source ={{  uri: this.state.foodImage }}></Image>
-                  
+
+                   {/* <TouchableOpacity
+                      onPress = {() => {this.pickImageFood()}}
+                    >
+                      <Image style={{width: 70, height: 70}}
+                      source= {require('../icons/icons8-add-80.png')}
+                    ></Image>
+                  </TouchableOpacity>
+                   */}
                 </View>
-
-                <Text style = {styles.text}>Tên món</Text>
-            
-                <TextInput 
-                    style = {styles.input}
-              
-                    onChangeText={(foodName) => this.setState({foodName})}
-                    value = {this.state.foodName}
-                    returnKeyType="next"
-                    onSubmitEditing={() => this.refs.textDescription.focus()}>
-                </TextInput>
-
-                <Text style = {styles.text}>Mô tả</Text>
-      
-                <TextInput 
-                    ref={'textDescription'}
-                    style = {styles.textDescription}
-                  
-                 
-                    onChangeText={(foodDescription) => this.setState({foodDescription})}
-                    value = {this.state.foodDescription}
-                    returnKeyType="next"
-                    onSubmitEditing={() => this.refs.txtPrice.focus()}
-                    
-                ></TextInput>
-
-                <Text style = {styles.text}>Giá</Text>
-      
-                <TextInput 
-                    ref={'txtPrice'}
-                    style = {styles.input}
-                  
-                    keyboardType = 'numeric'
-                    onChangeText={(foodPrice) => this.setState({foodPrice})}
-                    value = {this.state.foodPrice}
-                    returnKeyType="go">
-                </TextInput>
 
                 <TouchableOpacity style = {styles.button} onPress= {() => this.addNewFood()}>
                   <Text style = {styles.textButton}>Tạo món</Text>
@@ -238,7 +250,8 @@ const styles = StyleSheet.create({
       
     },
     text: {
-      marginLeft: 20
+      marginLeft: 20,
+      marginTop: 20
     },
     contentImage: {
       flexDirection: 'row',
@@ -246,22 +259,36 @@ const styles = StyleSheet.create({
       marginTop: 20
     },
     imageFood: {
-      height: 200,
-      width: 200,
-      borderRadius: 100
+      height: 100,
+      width: 100,
+      borderRadius: 50
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#3399ff',
-        margin: 20,
-        borderRadius: 10
+      borderWidth: 1,
+      borderColor: '#3399ff',
+      marginTop: 20,
+      marginLeft: 20,
+      marginRight: 20,
+      borderRadius: 10
+    },
+    inputDescription: {
+      borderWidth: 1,
+      borderColor: '#3399ff',
+      marginTop: 20,
+      marginLeft: 20,
+      marginRight: 20,
+      borderRadius: 10,
+      lineHeight: 20,
+      textAlignVertical: 'top'
+
     },
     textDescription: {
-      margin: 20,
+      marginTop: 20,
+      marginLeft: 20,
+      marginRight: 20,
       borderWidth: 1,
       borderColor: '#3399ff',
       borderRadius: 10
-      
     },
     button: {
       margin: 20,

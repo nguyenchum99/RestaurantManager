@@ -1,5 +1,4 @@
 
-import { VictoryBar, VictoryChart, VictoryTheme } from "victory-native";
 import {
     StyleSheet,
     View,
@@ -25,18 +24,8 @@ import {
       }
     }
 
-
-    //get current time
-    componentDidMount(){
-    
-      var year = new Date().getFullYear(); //Current Year
-
-      this.setState( {
-        yearCurrent: year
-      })
-
-
-      let temp = [];
+    componentWillMount(){
+      const temp = [];
       let total = 0;
      
       for(var i = 0; i < 12; i++){
@@ -45,31 +34,38 @@ import {
           let month = Number(i) + 1;
           this.itemRef.ref('Orders').orderByChild('monthOrdered').equalTo(month)
           .on('value', (snapshot) => {
-
-             console.log(snapshot)
+           
               snapshot.forEach((child) => {
-                console.log (child)
                 total += Number(child.val().total);
               });
-              // console.log(total)
-              temp.push(total) 
-              this.setState({totalMonth: temp}) 
-            
+              console.log(total)
+              temp[i] = total;
             });
-            console.log(total)
-            // temp.push(total) 
-            // this.setState({totalMonth: temp})  
-             total = 0;
-          //this.setState({totalMonth: temp})
+            // console.log(total)
+            // temp[i] = total;
+            this.setState({totalMonth: temp}) 
         } 
-     
+        console.log("total months: " +this.state.totalMonth)
+
+      //  this.setState({totalMonth: temp})
     }
 
-    render() {
+    //get current time
+    componentDidMount(){
+    
+      var year = new Date().getFullYear(); //Current Year
+      this.setState( {
+        yearCurrent: year
+      })
+    }
 
-     console.log("total months: " +this.state.totalMonth)
+
+    render() {
+    
+  
       return (
         <View style={styles.container}>
+          <Text>{this.state.totalMonth}</Text>
           <Text style = {styles.title}>Thống kê theo tháng</Text>
           
           <Text style = {styles.textTime}>Năm: {this.state.yearCurrent}</Text>

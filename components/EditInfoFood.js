@@ -56,11 +56,6 @@ export default class EditFood extends React.Component{
         
 
         firebaseApp.database().ref(`Foods/${this.state.key}`).once('value', (snapshot) => {
-            // snapshot.forEach(function (childSnapshot) {
-
-            //     var value = childSnapshot.val();
-            //     console.log(value);
-            // });
             this.state.newFoodName = snapshot.child('name').val();
             this.state.priceText = snapshot.child('price').val();
             this.state.descriptionText = snapshot.child('description').val();

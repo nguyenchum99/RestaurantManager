@@ -5,12 +5,13 @@ import FlatListFoods from '../components/FlatListFoods';
 import AddNewFood from '../components/AddNewFood';
 import React, { Component } from 'react';
 import {Image} from 'react-native';
+import StackFood from './StackFood';
 
 
 const TopNavigator = createMaterialTopTabNavigator(
     {
         ListFood: { 
-            screen: FlatListFoods,
+            screen: StackFood,
             navigationOptions: {
                 tabBarLabel:"Danh sách món ăn",
                 tabBarIcon: ({ tintColor }) => (

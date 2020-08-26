@@ -1,92 +1,8 @@
 import { StyleSheet, Text, View, FlatList, Image, Alert } from 'react-native';
 import React, { Component } from 'react';
 import { firebaseApp } from '../components/FirebaseConfig';
-import EditFood from './EditInfoFood';
-import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-
-//render item flatlist
-class FlatListItem extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      activeRowKey: null,
-    };
-  }
-
-
-  clickItemFood() {
-      //alert("sdjfsd")
-      this.setState({ activeRowKey: this.props.item.key });
-      Alert.alert(
-        'Món ăn',
-        '',
-        [
-          {
-            text: 'Xóa món ăn',
-            onPress: () => {
-              Alert.alert(
-                'Cảnh báo',
-                'Bạn có chắc muốn xóa không ?',
-                [
-                  {
-                    text: 'Không',
-                    onPress: () => console.log('Cancel'),
-                    style: 'cancel',
-                  },
-                  {
-                    text: 'Có',
-                    onPress: () => {
-                      firebaseApp.database().ref('Foods').child(this.state.activeRowKey).remove();
-                      this.props.parentFlatList.refreshFlatList(this.state.activeRowKey);
-                    },
-                  },
-                ],
-                { cancelable: false }
-              );
-            },
-            style: 'cancel',
-          },
-          {
-            text: 'Sửa thông tin',
-            onPress: () => {
-              this.props.parentFlatList.refs.editModal.showEditModal(
-                firebaseApp.database().ref('Foods').child(this.state.activeRowKey),
-                this
-              );
-            },
-          },
-        ],
-        { cancelable: false},
-            {  onDismiss: () => { console.log('Dismissed') }
-         },
-      );
-  }
-
-
-  render() {
-    
-    return (
-     
-      <TouchableOpacity   onPress = {() => this.clickItemFood()}>
-        <View style={styles.contentItem}>
-          <Image
-            style={styles.imageItem}
-            source={{ uri: this.props.item.imageUrl }}
-          ></Image>
-
-          <View style={styles.textItem}>
-            <Text style={styles.nameItem}>
-              {this.props.item.name}
-            </Text>
-            <Text style = {styles.text}>Giá: {this.props.item.price} $</Text>
-            <Text style = {styles.text}>Mô tả: {this.props.item.description}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  }
-}
 
 export default class FlatListFoods extends React.Component {
   constructor(props) {
@@ -114,17 +30,60 @@ export default class FlatListFoods extends React.Component {
     });
   }
 
-  refreshFlatList = (deletedKey) => {
-    this.setState((prevState) => {
-      return {
-        deletedRowKey: deletedKey,
-      };
-    });
-  };
+  // refreshFlatList = (deletedKey) => {
+  //   this.setState((prevState) => {
+  //     return {
+  //       deletedRowKey: deletedKey,
+  //     };
+  //   });
+  // };
 
-  onPressAdd() {
-    //  alert("you add item");
-    this.refs.addModal.showAddModal();
+
+  clickItemFood =(key) => {
+      Alert.alert(
+        'Món ăn',
+        '',
+        [
+          {
+            text: 'Xóa món ăn',
+            onPress: () => {
+              Alert.alert(
+                'Cảnh báo',
+                'Bạn có chắc muốn xóa không ?',
+                [
+                  {
+                    text: 'Không',
+                    onPress: () => console.log('Cancel'),
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'Có',
+                    onPress: () => {
+                      firebaseApp.database().ref(`Foods/${key}`).remove();
+                     // this.props.parentFlatList.refreshFlatList(this.state.activeRowKey);
+                    },
+                  },
+                ],
+                { cancelable: false }
+              );
+            },
+            style: 'cancel',
+          },
+          {
+            text: 'Sửa thông tin',
+            onPress: () => {
+              // this.props.parentFlatList.refs.editModal.showEditModal(
+              //   firebaseApp.database().ref('Foods').child(this.state.activeRowKey)
+              this.props.navigation.navigate('edit',{
+                keyFood: key
+              })
+            },
+          },
+        ],
+        { cancelable: false},
+            {  onDismiss: () => { console.log('Dismissed') }
+        },
+      );
   }
 
   render() {
@@ -134,15 +93,30 @@ export default class FlatListFoods extends React.Component {
           style = {styles.flatList}
           data={this.state.data}
           renderItem={({ item, index }) => {
-            return <FlatListItem item={item} index={index} parentFlatList={this}></FlatListItem>;
+            return(
+              <TouchableOpacity   onPress = {() => this.clickItemFood(item.key)}>
+                  <View style={styles.contentItem}>
+                    <Image
+                      style={styles.imageItem}
+                      source={{ uri: item.imageUrl }}
+                    ></Image>
+
+                    <View style={styles.textItem}>
+                      <Text style={styles.nameItem}>
+                        {item.name}
+                      </Text>
+                      <Text style = {styles.text}>Giá: {item.price} $</Text>
+                      <Text style = {styles.text}>Mô tả: {item.description}</Text>
+                    </View>
+                  </View>
+              </TouchableOpacity>
+            );
           }}
           keyExtractor={(item) => item.key}
           ref={'flatList'}
           onContentSizeChange={() => this.refs.flatList.scrollToEnd()}
         />
       
-        <EditFood ref={'editModal'} parentFlatList={this}></EditFood>
-    
       </View>
     );
   }
