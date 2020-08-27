@@ -41,7 +41,7 @@ import {
   
     
     //update db
-    addAMountFood = () => { 
+    addAMountFood = (item) => { 
        item.amount = this.state.foodAmount;
        console.log(item)
     }

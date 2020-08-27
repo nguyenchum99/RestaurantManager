@@ -2,6 +2,7 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import Calendars from '../components/Calendars';
 import SalesDay from '../components/StatisticalDay';
+import AfterDay from '../components/StatisticalAfterDay';
 
 
 const StackNavigator = createStackNavigator({
@@ -11,7 +12,9 @@ const StackNavigator = createStackNavigator({
   'Doanh số theo ngày': {
       screen: SalesDay
   },
-
+  'test': {
+    screen: AfterDay
+  }
  
 });
 
