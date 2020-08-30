@@ -109,7 +109,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
             <Calendar
                 current={Date()}
                 minDate = {'2018-01-01'}
-                maxDate = {'2021-12-30'}
+                maxDate = {new Date()}
                 pastScrollRange={50}
                 futureScrollRange={50}
                 scrollEnabled={true}

@@ -38,7 +38,8 @@ import {
         var total = 0;
 
         //read data and calculator total money day
-        this.itemRef.ref('Orders').orderByChild('dateOrdered').startAt(time1).endAt(time2).on('value', (snapshot) => {
+        this.itemRef.ref('Orders').orderByChild('dateOrdered')
+        .startAt(time1).endAt(time2).on('value', (snapshot) => {
             var li = [];
             var index = 0;
             snapshot.forEach((child) => {
@@ -63,7 +64,10 @@ import {
        console.log('data' + this.state.data)
       return (
         <View style={styles.container}>
-          <Text style = {styles.title}>Thống kê hóa đơn sau ngày {this.state.time}</Text>
+          
+          <Text style = {styles.title}>Thống kê hóa đơn từ ngày 
+          {this.state.time1} đến ngày {this.state.time12}</Text>
+
           <Text style = {styles.textMoney}>Tổng hóa đơn: {this.state.totalDay} $</Text>
           <ScrollView style = {styles.table}>
             <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}}>
